@@ -1,0 +1,25 @@
+# Archivos de configuración de Qt Creator
+*.pro.user
+*.pro.user.*
+*.creator
+*.autosave
+
+# Directorios y archivos de compilación
+# Ignora todos los directorios que empiecen por 'build-'
+build-*
+
+# Archivos objeto
+*.o
+*.obj
+
+# Ejecutables (binarios)
+*.exe
+# En Linux/macOS, ignora los binarios sin extensión
+#*
+#!*/
+#!*/.gitignore
+
+# Directorios comunes de salida de compilación
+debug/
+release/
+tmp/
