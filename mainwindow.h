@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QPushButton> // Necesario si usas el Q_OBJECT con botones
-#include "productioncontroller.h" // ¡Importante!
+#include <QPushButton>
+#include <QCloseEvent> // Necesario para manejar el guardado al cerrar
+#include "productioncontroller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,9 +18,12 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    // Sobreescribe el evento de cierre para guardar datos y detener hilos
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     Ui::MainWindow *ui;
-    // DECLARACIÓN: El controlador es quien administra toda la lógica
     ProductionController *controller;
 };
 
