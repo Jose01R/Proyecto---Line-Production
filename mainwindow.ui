@@ -6,48 +6,246 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1000</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Simulación de Línea de Producción</string>
   </property>
+
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton_Start">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>290</y>
-      <width>88</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>START</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_Stop">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>290</y>
-      <width>88</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>STOP</string>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+
+    <!-- PANEL SUPERIOR: CONTROL -->
+    <item row="0" column="0" colspan="2">
+     <widget class="QGroupBox" name="groupBox_Controls">
+      <property name="title">
+       <string>Controles de Simulación</string>
+      </property>
+      <layout class="QHBoxLayout" name="layoutControls">
+       <item>
+        <widget class="QPushButton" name="pushButton_Start">
+         <property name="text">
+          <string>▶ Iniciar</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: lightgreen; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Pause">
+         <property name="text">
+          <string>⏸ Pausar</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: khaki; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Stop">
+         <property name="text">
+          <string>⏹ Detener</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: salmon; font-weight: bold;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Reset">
+         <property name="text">
+          <string>♻ Reiniciar</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_Status">
+         <property name="text">
+          <string>Estado: Sistema detenido</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold; color: red;</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- PANEL CENTRAL: ESTACIONES -->
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBox_Linea">
+      <property name="title">
+       <string>Línea de Producción</string>
+      </property>
+      <layout class="QVBoxLayout" name="layoutLinea">
+       <item>
+        <layout class="QHBoxLayout" name="layoutStations">
+         <item>
+          <widget class="QLabel" name="label_Assembler">
+           <property name="text">
+            <string>🔧 Ensamblaje</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_Tester">
+           <property name="text">
+            <string>🧪 Inspección</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_Packager">
+           <property name="text">
+            <string>📦 Empaquetado</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- PANEL LATERAL DERECHO: MÉTRICAS -->
+    <item row="1" column="1">
+     <widget class="QGroupBox" name="groupBox_Metrics">
+      <property name="title">
+       <string>Métricas y Estadísticas</string>
+      </property>
+      <layout class="QVBoxLayout" name="layoutMetrics">
+       <item>
+        <widget class="QLabel" name="label_ProductsProcessed">
+         <property name="text">
+          <string>Productos procesados: 0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_ThreadsActive">
+         <property name="text">
+          <string>Hilos activos: 0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_BufferUsage">
+         <property name="text">
+          <string>Uso de buffers: 0%</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QProgressBar" name="progressBar_Throughput">
+         <property name="value">
+          <number>0</number>
+         </property>
+         <property name="format">
+          <string>Rendimiento: %p%</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="tableWidget_Threads">
+         <column>
+          <property name="text">
+           <string>Hilo</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Estado</string>
+          </property>
+         </column>
+         <property name="rowCount">
+          <number>0</number>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- PANEL INFERIOR: LOGS -->
+    <item row="2" column="0" colspan="2">
+     <widget class="QGroupBox" name="groupBox_Logs">
+      <property name="title">
+       <string>Registro de Eventos</string>
+      </property>
+      <layout class="QVBoxLayout" name="layoutLogs">
+       <item>
+        <widget class="QTextEdit" name="textEdit_Log">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: #f7f7f7; font-family: Consolas, monospace;</string>
+         </property>
+         <property name="placeholderText">
+          <string>Mensajes de las estaciones aparecerán aquí...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+   </layout>
   </widget>
+
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>23</height>
+     <width>1000</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

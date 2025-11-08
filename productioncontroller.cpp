@@ -97,12 +97,9 @@ void ProductionController::stopProduction() {
 }
 
 void ProductionController::generateProduct() {
-    productIdCounter++;
-    Product newProduct(productIdCounter, "Electrodoméstico Genérico");
-    qDebug() << "Generando nuevo producto:" << newProduct.showInfo();
-
-    // El primer buffer (bufferList[0]) actúa como la entrada de la línea
+    Product* newProduct = new Product(productIdCounter++, "Electrodoméstico Genérico");
+    qDebug() << "Generando nuevo producto:" << newProduct->showInfo();
     bufferList[0]->addProduct(newProduct);
+    emit newProductCreated(*newProduct); // o newProduct, según tu señal
 
-    emit newProductCreated(newProduct);
 }
