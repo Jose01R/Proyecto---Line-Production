@@ -2,29 +2,46 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QPushButton>
-#include <QCloseEvent> // Necesario para manejar el guardado al cerrar
+#include <QTimer>
 #include "productioncontroller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-protected:
-    // Sobreescribe el evento de cierre para guardar datos y detener hilos
-    void closeEvent(QCloseEvent *event) override;
+private slots:
+    // Botones
+    void on_pushButton_Start_clicked();
+    void on_pushButton_Stop_clicked();
+    void on_pushButton_Pause_clicked();
+    void on_pushButton_Reset_clicked();
+
+    // Señales recibidas desde controller
+    void onStationStatusUpdate(int stationId, const QString &status);
+    void onProductFinishedProcessing(const Product &product, const QString &stationName);
+    void onProductionLineStatus(const QString& msg);
+
+    // Métricas
+    void updateMetrics();
 
 private:
     Ui::MainWindow *ui;
+
     ProductionController *controller;
+    QTimer *metricsTimer;
+    int productsProcessed;
+
+    void setupConnections();
+    void updateStationVisual(int stationId, const QString &status);
 };
 
 #endif // MAINWINDOW_H
+
+

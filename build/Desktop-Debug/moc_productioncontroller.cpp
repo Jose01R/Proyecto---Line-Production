@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_ProductionController_t {
-    QByteArrayData data[14];
-    char stringdata0[193];
+    QByteArrayData data[15];
+    char stringdata0[216];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -45,7 +45,8 @@ QT_MOC_LITERAL(9, 114, 19), // "productStateChanged"
 QT_MOC_LITERAL(10, 134, 11), // "stationName"
 QT_MOC_LITERAL(11, 146, 15), // "startProduction"
 QT_MOC_LITERAL(12, 162, 14), // "stopProduction"
-QT_MOC_LITERAL(13, 177, 15) // "generateProduct"
+QT_MOC_LITERAL(13, 177, 15), // "generateProduct"
+QT_MOC_LITERAL(14, 193, 22) // "onFinalProductFinished"
 
     },
     "ProductionController\0newProductCreated\0"
@@ -53,7 +54,7 @@ QT_MOC_LITERAL(13, 177, 15) // "generateProduct"
     "status\0updateStationStatus\0stationId\0"
     "productStateChanged\0stationName\0"
     "startProduction\0stopProduction\0"
-    "generateProduct"
+    "generateProduct\0onFinalProductFinished"
 };
 #undef QT_MOC_LITERAL
 
@@ -63,7 +64,7 @@ static const uint qt_meta_data_ProductionController[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -71,15 +72,16 @@ static const uint qt_meta_data_ProductionController[] = {
        4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   49,    2, 0x06 /* Public */,
-       5,    1,   52,    2, 0x06 /* Public */,
-       7,    2,   55,    2, 0x06 /* Public */,
-       9,    2,   60,    2, 0x06 /* Public */,
+       1,    1,   54,    2, 0x06 /* Public */,
+       5,    1,   57,    2, 0x06 /* Public */,
+       7,    2,   60,    2, 0x06 /* Public */,
+       9,    2,   65,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      11,    0,   65,    2, 0x0a /* Public */,
-      12,    0,   66,    2, 0x0a /* Public */,
-      13,    0,   67,    2, 0x0a /* Public */,
+      11,    0,   70,    2, 0x0a /* Public */,
+      12,    0,   71,    2, 0x0a /* Public */,
+      13,    0,   72,    2, 0x0a /* Public */,
+      14,    2,   73,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -91,6 +93,7 @@ static const uint qt_meta_data_ProductionController[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 3, QMetaType::QString,    4,   10,
 
        0        // eod
 };
@@ -108,6 +111,7 @@ void ProductionController::qt_static_metacall(QObject *_o, QMetaObject::Call _c,
         case 4: _t->startProduction(); break;
         case 5: _t->stopProduction(); break;
         case 6: _t->generateProduct(); break;
+        case 7: _t->onFinalProductFinished((*reinterpret_cast< const Product(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -172,13 +176,13 @@ int ProductionController::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }

@@ -1,9 +1,12 @@
 #include "productioncontroller.h"
-#include <QFileInfo>
+#include <QDebug>
 
 ProductionController::ProductionController(QObject* parent)
-    : QObject(parent), productIdCounter(0) {
-
+    : QObject(parent),
+    productIdCounter(0),
+    totalGoal(0),
+    completedCount(0)
+{
     productGenerationTimer = new QTimer(this);
     connect(productGenerationTimer, &QTimer::timeout, this, &ProductionController::generateProduct);
 
@@ -14,228 +17,125 @@ ProductionController::~ProductionController() {
     stopProduction();
     qDeleteAll(stationList);
     qDeleteAll(bufferList);
-    qDebug() << "ProductionController destruido.";
+}
+
+void ProductionController::setProductionGoal(int amount) {
+    totalGoal = amount;
+    completedCount = 0;
+    qDebug() << "Meta de producción establecida:" << totalGoal;
 }
 
 void ProductionController::setupProductionLine(int numberOfStations) {
-    if (numberOfStations < 1) {
-        qWarning() << "El número de estaciones debe ser al menos 1.";
-        return;
-    }
 
-    // Limpiar si ya había algo
-    stopProduction();
-    qDeleteAll(stationList);
-    qDeleteAll(bufferList);
-    stationList.clear();
+    if (numberOfStations < 1) return;
+
     bufferList.clear();
+    stationList.clear();
 
-    // Crear buffers: (numberOfStations + 1)
     for (int i = 0; i < numberOfStations + 1; ++i) {
         bufferList.append(new Buffer());
-        qDebug() << "Buffer " << i << " creado.";
+        qDebug() << "Buffer" << i << "creado.";
     }
 
-    // Crear estaciones y conectarlas
-    // Estación 1: Assembler (Entrada: Buffer[0], Salida: Buffer[1])
     Assembler* assembler = new Assembler(1, bufferList[0], bufferList[1], this);
     stationList.append(assembler);
-    // Conexiones de señal
     connect(assembler, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
     connect(assembler, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
-    qDebug() << "Estación 1: Ensamblaje agregada.";
 
-    // Estaciones intermedias (i=2 hasta numberOfStations)
-    for (int i = 2; i <= numberOfStations; ++i) {
-        Buffer* input = bufferList[i-1];
-        Buffer* output = bufferList[i];
+    Tester* tester1 = new Tester(2, bufferList[1], bufferList[2], this);
+    stationList.append(tester1);
+    connect(tester1, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester1, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
 
-        // Alternar tipos de estación (ejemplo)
-        Station* newStation = nullptr;
-        if (i % 2 == 0) {
-            newStation = new Tester(i, input, output, this);
-        } else {
-            newStation = new Assembler(i, input, output, this);
-        }
+    Tester* tester2 = new Tester(3, bufferList[2], bufferList[3], this);
+    stationList.append(tester2);
+    connect(tester2, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester2, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
 
-        stationList.append(newStation);
-        connect(newStation, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
-        connect(newStation, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
-        qDebug() << "Estación " << i << ": " << newStation->getName() << " agregada.";
-    }
+    Tester* tester3 = new Tester(4, bufferList[3], bufferList[4], this);
+    stationList.append(tester3);
+    connect(tester3, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester3, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
 
-    emit productionLineStatus("Línea de producción configurada con " + QString::number(stationList.size()) + " estaciones.");
+    Tester* storage = new Tester(5, bufferList[4], nullptr, this);
+    stationList.append(storage);
+    connect(storage, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(storage, &Station::productFinishedProcessing, this, &ProductionController::onFinalProductFinished);
+
+    emit productionLineStatus("Línea configurada.");
 }
 
 void ProductionController::startProduction() {
-    // ... (El código de startProduction se mantiene igual)
-    qDebug() << "Iniciando producción...";
-    emit productionLineStatus("Producción Iniciada");
 
-    productGenerationTimer->start(2000);
+    if (totalGoal <= 0) {
+        emit productionLineStatus("Debe establecer meta antes de iniciar");
+        return;
+    }
+
+    productGenerationTimer->start(1000);
+    emit productionLineStatus("Producción iniciada.");
 
     for (Station* station : stationList) {
         if (!station->isRunning()) {
             station->start();
-            qDebug() << "Hilo de estación " << station->getName() << " iniciado.";
         }
     }
 }
 
 void ProductionController::stopProduction() {
-    // ... (El código de stopProduction se mantiene igual, ahora usando el stopStation seguro)
-    qDebug() << "Deteniendo producción...";
-    emit productionLineStatus("Producción Detenida");
-
-    if (productGenerationTimer->isActive()) {
-        productGenerationTimer->stop();
-    }
+    productGenerationTimer->stop();
+    emit productionLineStatus("Producción detenida.");
 
     for (Station* station : stationList) {
-        if (station->isRunning()) {
-            station->stopStation();
-            qDebug() << "Hilo de estación " << station->getName() << " detenido.";
-        }
+        station->stopStation();
     }
 }
 
 void ProductionController::generateProduct() {
-    // ... (El código de generateProduct se mantiene igual)
-    productIdCounter++;
-    Product newProduct(productIdCounter, "Electrodoméstico Genérico");
-    qDebug() << "Generando nuevo producto:" << newProduct.showInfo();
 
-    bufferList[0]->addProduct(newProduct);
+    if (completedCount >= totalGoal) {
+        stopProduction();
+        return;
+    }
 
-    emit newProductCreated(newProduct);
+    Product* newProduct = new Product(productIdCounter++, "Electrodoméstico");
+    qDebug() << "Generando producto" << newProduct->showInfo();
+
+    if (!bufferList[0]->tryAddProduct(newProduct, 50)) {
+        qDebug() << "Buffer 0 lleno; reintento en el próximo tick";
+        delete newProduct;                  // o guárdalo para reintentar, como prefieras
+        return;
+    }
+
+    emit newProductCreated(*newProduct);
 }
 
+void ProductionController::onFinalProductFinished(const Product& product, const QString& stationName) {
 
-// --- IMPLEMENTACIÓN DE PERSISTENCIA JSON ---
+    completedCount++;
 
-bool ProductionController::saveDataToJson() const {
-    qDebug() << "Intentando guardar datos de persistencia...";
+    emit productStateChanged(product, stationName);
 
-    QJsonObject rootObject;
+    qDebug() << "Producto finalizado:" << completedCount << "/" << totalGoal;
 
-    // 1. Serializar Buffers
-    QJsonArray bufferArray;
-    for (const Buffer* buffer : bufferList) {
-        bufferArray.append(buffer->toJson());
+    if (completedCount >= totalGoal) {
+        stopProduction();
+        emit productionLineStatus("Meta alcanzada");
     }
-    rootObject["buffers"] = bufferArray;
-
-    // 2. Serializar Estaciones
-    QJsonArray stationArray;
-    for (const Station* station : stationList) {
-        stationArray.append(station->toJson());
-    }
-    rootObject["stations"] = stationArray;
-
-    // 3. Serializar Contador de Productos
-    rootObject["productIdCounter"] = productIdCounter;
-
-    // 4. Escribir en el archivo
-    QJsonDocument saveDoc(rootObject);
-    QFile saveFile(DATA_FILENAME);
-
-    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning() << "Error: No se pudo abrir el archivo para guardar:" << DATA_FILENAME;
-        return false;
-    }
-
-    saveFile.write(saveDoc.toJson(QJsonDocument::Indented));
-    saveFile.close();
-    qDebug() << "Éxito: Datos de persistencia guardados en:" << DATA_FILENAME;
-    return true;
 }
 
-bool ProductionController::loadDataFromJson() {
-    QFile loadFile(DATA_FILENAME);
-
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning() << "Advertencia: Archivo de datos no encontrado. Iniciando sin cargar datos.";
-        return false;
+int ProductionController::getActiveThreadCount() const {
+    int active = 0;
+    for (auto station : stationList) {
+        if (station->isRunning()) active++;
     }
+    return active;
+}
 
-    QByteArray savedData = loadFile.readAll();
-    loadFile.close();
-    QJsonDocument loadDoc = QJsonDocument::fromJson(savedData);
-    QJsonObject rootObject = loadDoc.object();
+int ProductionController::getBufferUsage(int index) const {
+    if (index < 0 || index >= bufferList.size())
+        return 0;
 
-    // 1. Limpiar estado actual (es CRÍTICO antes de cargar)
-    stopProduction();
-    qDeleteAll(stationList);
-    qDeleteAll(bufferList);
-    stationList.clear();
-    bufferList.clear();
-
-    // 2. Cargar Buffers
-    if (rootObject.contains("buffers") && rootObject["buffers"].isArray()) {
-        QJsonArray bufferArray = rootObject["buffers"].toArray();
-        for (const QJsonValue& value : bufferArray) {
-            if (value.isObject()) {
-                Buffer* newBuffer = new Buffer();
-                newBuffer->fromJson(value.toObject());
-                bufferList.append(newBuffer);
-            }
-        }
-    } else {
-        qWarning() << "Error: Datos de buffers faltantes o inválidos.";
-        return false;
-    }
-
-    // 3. Cargar Estaciones
-    if (rootObject.contains("stations") && rootObject["stations"].isArray()) {
-        QJsonArray stationArray = rootObject["stations"].toArray();
-        for (int i = 0; i < stationArray.size(); ++i) {
-            const QJsonValue& value = stationArray.at(i);
-            if (value.isObject()) {
-                QJsonObject stationJson = value.toObject();
-                QString className = stationJson["className"].toString();
-
-                Station* newStation = nullptr;
-
-                // Asignar Buffers basados en la posición (Asume un flujo lineal y completo)
-                if (i < bufferList.size() - 1) {
-                    Buffer* input = bufferList[i];
-                    Buffer* output = bufferList[i+1];
-
-                    // Re-crear la instancia de la clase correcta
-                    if (className == "Assembler") {
-                        // Usamos un ID temporal (0) ya que fromJson restaurará el ID real
-                        newStation = new Assembler(0, input, output, this);
-                    } else if (className == "Tester") {
-                        newStation = new Tester(0, input, output, this);
-                    }
-
-                    if (newStation) {
-                        newStation->fromJson(stationJson);
-                        stationList.append(newStation);
-                        // Reconectar señales
-                        connect(newStation, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
-                        connect(newStation, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
-                    } else {
-                        qWarning() << "Error: Tipo de estación desconocido:" << className;
-                    }
-                } else {
-                    qWarning() << "Error: No hay suficientes buffers para enlazar la estación cargada. Deteniendo carga de estaciones.";
-                    break;
-                }
-            }
-        }
-    } else {
-        qWarning() << "Error: Datos de estaciones faltantes o inválidos.";
-        return false;
-    }
-
-    // 4. Cargar Contador de Productos
-    if (rootObject.contains("productIdCounter") && rootObject["productIdCounter"].isDouble()) {
-        productIdCounter = rootObject["productIdCounter"].toInt();
-        qDebug() << "Contador de productos restaurado a:" << productIdCounter;
-    }
-
-    emit productionLineStatus("Línea de producción restaurada desde archivo de persistencia.");
-    qDebug() << "Éxito: Datos de persistencia cargados y línea restaurada.";
-    return true;
+    Buffer* b = bufferList[index];
+    return (b->size() * 100) / b->getCapacity();
 }

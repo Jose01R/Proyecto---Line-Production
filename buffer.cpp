@@ -1,43 +1,50 @@
 #include "buffer.h"
-
+#include <QThread>
 Buffer::Buffer(int maxCapacity) : capacity(maxCapacity) {
     qDebug() << "Buffer creado con capacidad:" << capacity;
 }
 
-void Buffer::addProduct(const Product& product) {
+void Buffer::addProduct(Product* product) {
     QMutexLocker locker(&mutex);
-
     while (queue.size() >= capacity) {
-        qDebug() << "Buffer Lleno (" << queue.size() << "/" << capacity << "). Esperando para añadir Producto ID:" << product.getId();
         condition.wait(&mutex);
     }
-
     queue.enqueue(product);
-    qDebug() << "Producto ID:" << product.getId() << " añadido. Tamaño actual:" << queue.size();
-
+    qDebug() << "Producto ID:" << product->getId() << " añadido. Tamaño actual:" << queue.size();
     condition.wakeOne();
 }
 
-Product Buffer::removeProduct() {
+
+
+Product* Buffer::removeProduct() {
     QMutexLocker locker(&mutex);
 
     while (queue.isEmpty()) {
-        qDebug() << "Buffer Vacío. Esperando por un producto...";
-        condition.wait(&mutex);
+        // Espera 100ms máx
+        if (!condition.wait(&mutex, 100)) {
+            return nullptr;
+        }
     }
 
-    Product product = queue.dequeue();
-    qDebug() << "Producto ID:" << product.getId() << " consumido. Tamaño actual:" << queue.size();
-
+    Product* p = queue.dequeue();
     condition.wakeOne();
-
-    return product;
+    return p;
 }
 
-// IMPLEMENTACIÓN NUEVA para la detención segura
-void Buffer::wakeWaiters() {
+
+bool Buffer::tryAddProduct(Product* product, int timeoutMs) {
     QMutexLocker locker(&mutex);
-    condition.wakeAll(); // Despierta a todos los hilos esperando en este buffer
+
+    // Espera con timeout a que haya espacio
+    while (queue.size() >= capacity) {
+        if (!condition.wait(&mutex, timeoutMs)) {
+            return false; // no hubo espacio a tiempo
+        }
+    }
+    queue.enqueue(product);
+    qDebug() << "Producto ID:" << product->getId() << " añadido. Tamaño actual:" << queue.size();
+    condition.wakeOne();
+    return true;
 }
 
 bool Buffer::isEmpty() const {
@@ -49,3 +56,4 @@ int Buffer::size() const {
     QMutexLocker locker(&mutex);
     return queue.size();
 }
+

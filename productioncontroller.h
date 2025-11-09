@@ -3,48 +3,43 @@
 
 #include <QObject>
 #include <QList>
-#include <QDebug>
 #include <QTimer>
-#include <QFile>         // Añadido para manejo de archivos
-#include <QJsonDocument> // Añadido para JSON
-#include <QJsonObject>   // Añadido para JSON
-#include <QJsonArray>    // Añadido para JSON
-
-// Incluye todas las clases necesarias
 #include "station.h"
 #include "buffer.h"
 #include "assembler.h"
 #include "tester.h"
 #include "product.h"
 
-/**
- * @brief Clase que controla toda la línea de producción y gestiona la persistencia JSON.
- */
 class ProductionController : public QObject {
     Q_OBJECT
 
 private:
     QList<Station*> stationList;
     QList<Buffer*> bufferList;
-    int productIdCounter;
     QTimer* productGenerationTimer;
-    const QString DATA_FILENAME = "production_data.json"; // Archivo de persistencia
+
+    int productIdCounter;
+    int totalGoal;
+    int completedCount;
 
 public:
     explicit ProductionController(QObject* parent = nullptr);
     ~ProductionController() override;
 
-    void setupProductionLine(int numberOfStations = 2);
+    void setupProductionLine(int numberOfStations = 5);
+    void setProductionGoal(int amount);
 
-    // --- MÉTODOS DE PERSISTENCIA JSON ---
-    bool saveDataToJson() const;
-    bool loadDataFromJson();
-    // ------------------------------------
+    int getTotalGoal() const { return totalGoal; }
+    int getCompletedCount() const { return completedCount; }
+
+    int getActiveThreadCount() const;
+    int getBufferUsage(int index) const;
 
 public slots:
     void startProduction();
     void stopProduction();
     void generateProduct();
+    void onFinalProductFinished(const Product& product, const QString& stationName);
 
 signals:
     void newProductCreated(const Product& product);
@@ -54,3 +49,4 @@ signals:
 };
 
 #endif // PRODUCTIONCONTROLLER_H
+

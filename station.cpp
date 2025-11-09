@@ -8,51 +8,68 @@ Station::Station(int id, const QString& name, const QString& taskType, Buffer* i
     , inputBuffer(input)
     , outputBuffer(output)
     , running(false)
-
 {
-    qDebug() << "Estación " << name << " (ID:" << id << ") creada";
+    qDebug() << "Estación" << name << "(ID:" << id << ") creada.";
 }
 
 Station::~Station() {
-    qDebug() << "Estación " << name << " (ID:" << id << ") destruida";
+    qDebug() << "Estación" << name << "(ID:" << id << ") destruida.";
 }
 
 void Station::run() {
+
     running = true;
-    qDebug() << name << " (ID:" << id << ") - Hilo iniciado.";
-    emit stationStatusUpdate(id, "Activa");
+
+    auto sendStatus = [&](const QString& s){
+        if (lastStatus != s) {
+            emit stationStatusUpdate(id, s);
+            lastStatus = s;
+        }
+    };
+
+    sendStatus("Activa");
 
     while (running) {
-        // 1. Tomar producto (posible bloqueo)
-        Product product = inputBuffer->removeProduct();
 
-        if (!running) break; // Reverifica la bandera después de salir del bloqueo del buffer
+        Product* product = nullptr;
 
-        // 2. Procesar
-        qDebug() << name << " procesando producto ID:" << product.getId() << " (Estado:" << product.getCurrentState() << ")";
-        emit stationStatusUpdate(id, "Procesando Producto " + QString::number(product.getId()));
+        if (inputBuffer) {
+            product = inputBuffer->removeProduct();
 
-        processProduct(product);
+            if (!running) break;
 
-        // 3. Enviar
-        qDebug() << name << " terminó de procesar y envió producto ID:" << product.getId() << " (Estado:" << product.getCurrentState() << ")";
-        outputBuffer->addProduct(product);
+            if (!product) {
+                sendStatus("Esperando");   // ✅ si quieres mostrarlo
+                QThread::msleep(120);
+                continue;
+            }
+        } else {
+            QThread::msleep(100);
+            continue;
+        }
 
-        // 4. Actualizar estado
-        emit productFinishedProcessing(product, name);
-        emit stationStatusUpdate(id, "Esperando");
+        sendStatus("Procesando Producto " + QString::number(product->getId()));
+
+        processProduct(*product);
+
+        if (outputBuffer) {
+            outputBuffer->addProduct(product);
+        }
+
+        emit productFinishedProcessing(*product, name);
+
+        sendStatus("Esperando");   // ✅ si quieres mostrarlo
     }
 
-    qDebug() << name << " (ID:" << id << ") - Hilo detenido.";
-    emit stationStatusUpdate(id, "Detenida");
+    sendStatus("Detenida");       // ✅ si quieres mostrarlo
 }
 
-// IMPLEMENTACIÓN AJUSTADA para detener el hilo de forma segura
+
+
+
 void Station::stopStation() {
     running = false;
-    // Llama al nuevo método para liberar el hilo si está bloqueado esperando un producto
-    if (inputBuffer) {
-        inputBuffer->wakeWaiters();
-    }
-    //wait(); // Espera a que el método run() termine - dejar comentado
+    //wait();
 }
+
+
