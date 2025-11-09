@@ -5,24 +5,66 @@
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
-#include "product.h" // Incluye la definición de Product
+#include <QJsonObject> // Añadido para JSON
+#include <QJsonArray>  // Añadido para JSON
+#include "product.h"
 
 /**
  * @brief Cola protegida que sirve como enlace de comunicación sincronizado entre estaciones.
  */
 class Buffer {
 private:
-    mutable QMutex mutex; // Para proteger el acceso a la cola (recurso compartido)
-    QWaitCondition condition; // Para la sincronización Productor-Consumidor
-    QQueue<Product> queue; // La cola de productos
-    int capacity; // Capacidad máxima del buffer
+    mutable QMutex mutex;
+    QWaitCondition condition;
+    QQueue<Product> queue;
+    int capacity;
 
 public:
-    explicit Buffer(int maxCapacity = 5); // Constructor
+    explicit Buffer(int maxCapacity = 5);
 
-    // Métodos para interactuar con el buffer
-    void addProduct(const Product& product); // Añade un producto (Productor)
-    Product removeProduct(); // Retira un producto (Consumidor)
+    // Métodos de Concurrencia
+    void addProduct(const Product& product);
+    Product removeProduct();
+
+    // MÉTODO NUEVO para la detención segura de hilos bloqueados
+    void wakeWaiters();
+
+    // --- MÉTODOS DE PERSISTENCIA JSON ---
+    QJsonObject toJson() const {
+        QMutexLocker locker(&mutex);
+        QJsonObject json;
+        QJsonArray productArray;
+
+        for (const Product& product : queue) {
+            productArray.append(product.toJson());
+        }
+
+        json["capacity"] = capacity;
+        json["products"] = productArray;
+        return json;
+    }
+
+    void fromJson(const QJsonObject& json) {
+        QMutexLocker locker(&mutex);
+        queue.clear();
+
+        if (json.contains("capacity") && json["capacity"].isDouble()) {
+            capacity = json["capacity"].toInt();
+        }
+
+        if (json.contains("products") && json["products"].isArray()) {
+            QJsonArray productArray = json["products"].toArray();
+            for (const QJsonValue& value : productArray) {
+                if (value.isObject()) {
+                    Product product;
+                    product.fromJson(value.toObject());
+                    queue.enqueue(product);
+                }
+            }
+        }
+        condition.wakeAll();
+    }
+    // ------------------------------------
 
     // Métodos utilitarios
     bool isEmpty() const;
