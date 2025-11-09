@@ -59,9 +59,12 @@ SOURCES       = ../../assembler.cpp \
 		../../productioncontroller.cpp \
 		../../station.cpp \
 		../../tester.cpp moc_assembler.cpp \
+		moc_labeler.cpp \
 		moc_mainwindow.cpp \
+		moc_packager.cpp \
 		moc_productioncontroller.cpp \
 		moc_station.cpp \
+		moc_storage.cpp \
 		moc_tester.cpp
 OBJECTS       = assembler.o \
 		buffer.o \
@@ -71,9 +74,12 @@ OBJECTS       = assembler.o \
 		station.o \
 		tester.o \
 		moc_assembler.o \
+		moc_labeler.o \
 		moc_mainwindow.o \
+		moc_packager.o \
 		moc_productioncontroller.o \
 		moc_station.o \
+		moc_storage.o \
 		moc_tester.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -155,10 +161,13 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../../../LineProduction.pro ../../assembler.h \
 		../../buffer.h \
+		../../labeler.h \
 		../../mainwindow.h \
+		../../packager.h \
 		../../product.h \
 		../../productioncontroller.h \
 		../../station.h \
+		../../storage.h \
 		../../tester.h ../../assembler.cpp \
 		../../buffer.cpp \
 		../../main.cpp \
@@ -351,7 +360,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../assembler.h ../../buffer.h ../../mainwindow.h ../../product.h ../../productioncontroller.h ../../station.h ../../tester.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../assembler.h ../../buffer.h ../../labeler.h ../../mainwindow.h ../../packager.h ../../product.h ../../productioncontroller.h ../../station.h ../../storage.h ../../tester.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../../assembler.cpp ../../buffer.cpp ../../main.cpp ../../mainwindow.cpp ../../productioncontroller.cpp ../../station.cpp ../../tester.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../mainwindow.ui $(DISTDIR)/
 
@@ -385,9 +394,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_assembler.cpp moc_mainwindow.cpp moc_productioncontroller.cpp moc_station.cpp moc_tester.cpp
+compiler_moc_header_make_all: moc_assembler.cpp moc_labeler.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_storage.cpp moc_tester.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_assembler.cpp moc_mainwindow.cpp moc_productioncontroller.cpp moc_station.cpp moc_tester.cpp
+	-$(DEL_FILE) moc_assembler.cpp moc_labeler.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_storage.cpp moc_tester.cpp
 moc_assembler.cpp: ../../assembler.h \
 		../../station.h \
 		../../buffer.h \
@@ -396,22 +405,45 @@ moc_assembler.cpp: ../../assembler.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../assembler.h -o moc_assembler.cpp
 
+moc_labeler.cpp: ../../labeler.h \
+		../../station.h \
+		../../buffer.h \
+		../../product.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../labeler.h -o moc_labeler.cpp
+
 moc_mainwindow.cpp: ../../mainwindow.h \
+		../../productioncontroller.h \
 		../../buffer.h \
 		../../product.h \
 		../../assembler.h \
 		../../station.h \
 		../../tester.h \
+		../../packager.h \
+		../../labeler.h \
+		../../storage.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
 
-moc_productioncontroller.cpp: ../../productioncontroller.h \
+moc_packager.cpp: ../../packager.h \
 		../../station.h \
 		../../buffer.h \
 		../../product.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../packager.h -o moc_packager.cpp
+
+moc_productioncontroller.cpp: ../../productioncontroller.h \
+		../../buffer.h \
+		../../product.h \
 		../../assembler.h \
+		../../station.h \
 		../../tester.h \
+		../../packager.h \
+		../../labeler.h \
+		../../storage.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../productioncontroller.h -o moc_productioncontroller.cpp
@@ -422,6 +454,14 @@ moc_station.cpp: ../../station.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../station.h -o moc_station.cpp
+
+moc_storage.cpp: ../../storage.h \
+		../../station.h \
+		../../buffer.h \
+		../../product.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../storage.h -o moc_storage.cpp
 
 moc_tester.cpp: ../../tester.h \
 		../../station.h \
@@ -452,10 +492,7 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-assembler.o: ../../assembler.cpp ../../assembler.h \
-		../../station.h \
-		../../buffer.h \
-		../../product.h
+assembler.o: ../../assembler.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o assembler.o ../../assembler.cpp
 
 buffer.o: ../../buffer.cpp ../../buffer.h \
@@ -463,28 +500,39 @@ buffer.o: ../../buffer.cpp ../../buffer.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o buffer.o ../../buffer.cpp
 
 main.o: ../../main.cpp ../../mainwindow.h \
-		../../buffer.h \
-		../../product.h \
-		../../assembler.h \
-		../../station.h \
-		../../tester.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
-
-mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
+		../../productioncontroller.h \
 		../../buffer.h \
 		../../product.h \
 		../../assembler.h \
 		../../station.h \
 		../../tester.h \
+		../../packager.h \
+		../../labeler.h \
+		../../storage.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
+
+mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
+		../../productioncontroller.h \
+		../../buffer.h \
+		../../product.h \
+		../../assembler.h \
+		../../station.h \
+		../../tester.h \
+		../../packager.h \
+		../../labeler.h \
+		../../storage.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../../mainwindow.cpp
 
 productioncontroller.o: ../../productioncontroller.cpp ../../productioncontroller.h \
-		../../station.h \
 		../../buffer.h \
 		../../product.h \
 		../../assembler.h \
-		../../tester.h
+		../../station.h \
+		../../tester.h \
+		../../packager.h \
+		../../labeler.h \
+		../../storage.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o productioncontroller.o ../../productioncontroller.cpp
 
 station.o: ../../station.cpp ../../station.h \
@@ -498,14 +546,23 @@ tester.o: ../../tester.cpp
 moc_assembler.o: moc_assembler.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_assembler.o moc_assembler.cpp
 
+moc_labeler.o: moc_labeler.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_labeler.o moc_labeler.cpp
+
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_packager.o: moc_packager.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_packager.o moc_packager.cpp
 
 moc_productioncontroller.o: moc_productioncontroller.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_productioncontroller.o moc_productioncontroller.cpp
 
 moc_station.o: moc_station.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_station.o moc_station.cpp
+
+moc_storage.o: moc_storage.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_storage.o moc_storage.cpp
 
 moc_tester.o: moc_tester.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_tester.o moc_tester.cpp

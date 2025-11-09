@@ -11,7 +11,7 @@ class Buffer {
 private:
     mutable QMutex mutex;
     QWaitCondition condition;
-    QQueue<Product*> queue; // 👈 ahora punteros
+    QQueue<Product*> queue; //  punteros
     int capacity;
 
 public:
@@ -19,6 +19,7 @@ public:
 
     void addProduct(Product* product);  // 👈 usa puntero
     Product* removeProduct();           // 👈 usa puntero
+    bool tryAddProduct(Product* product, int timeoutMs = 50);
 
     bool isEmpty() const;
     int size() const;

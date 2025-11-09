@@ -1,5 +1,5 @@
 #include "buffer.h"
-
+#include <QThread>
 Buffer::Buffer(int maxCapacity) : capacity(maxCapacity) {
     qDebug() << "Buffer creado con capacidad:" << capacity;
 }
@@ -14,15 +14,37 @@ void Buffer::addProduct(Product* product) {
     condition.wakeOne();
 }
 
+
+
 Product* Buffer::removeProduct() {
     QMutexLocker locker(&mutex);
+
     while (queue.isEmpty()) {
-        condition.wait(&mutex);
+        // Espera 100ms máx
+        if (!condition.wait(&mutex, 100)) {
+            return nullptr;
+        }
     }
-    Product* product = queue.dequeue();
-    qDebug() << "Producto ID:" << product->getId() << " consumido. Tamaño actual:" << queue.size();
+
+    Product* p = queue.dequeue();
     condition.wakeOne();
-    return product;
+    return p;
+}
+
+
+bool Buffer::tryAddProduct(Product* product, int timeoutMs) {
+    QMutexLocker locker(&mutex);
+
+    // Espera con timeout a que haya espacio
+    while (queue.size() >= capacity) {
+        if (!condition.wait(&mutex, timeoutMs)) {
+            return false; // no hubo espacio a tiempo
+        }
+    }
+    queue.enqueue(product);
+    qDebug() << "Producto ID:" << product->getId() << " añadido. Tamaño actual:" << queue.size();
+    condition.wakeOne();
+    return true;
 }
 
 bool Buffer::isEmpty() const {

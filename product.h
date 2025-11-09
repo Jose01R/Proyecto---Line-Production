@@ -17,6 +17,7 @@ public:
     //CONSTRUCTOR
     Product(int id, const QString& type) : id(id), type(type), currentState("Inicial") {}
 
+    Product() : id(-1), type("Undefined"), currentState("Inicial") {}
     // Lógica para avanzar el estado del producto
     void advanceState() {
         if (currentState == "Inicial") {

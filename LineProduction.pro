@@ -20,10 +20,13 @@ SOURCES += \
 HEADERS += \
     assembler.h \
     buffer.h \
+    labeler.h \
     mainwindow.h \
+    packager.h \
     product.h \
     productioncontroller.h \
     station.h \
+    storage.h \
     tester.h
 
 FORMS += \

@@ -46,6 +46,8 @@ public:
     QLabel *label_Assembler;
     QLabel *label_Tester;
     QLabel *label_Packager;
+    QLabel *label_Labeler;
+    QLabel *label_Storage;
     QGroupBox *groupBox_Metrics;
     QVBoxLayout *layoutMetrics;
     QLabel *label_ProductsProcessed;
@@ -135,6 +137,22 @@ public:
 
         layoutStations->addWidget(label_Packager);
 
+        label_Labeler = new QLabel(groupBox_Linea);
+        label_Labeler->setObjectName(QString::fromUtf8("label_Labeler"));
+        label_Labeler->setAlignment(Qt::AlignCenter);
+        label_Labeler->setMinimumSize(QSize(150, 80));
+        label_Labeler->setStyleSheet(QString::fromUtf8("background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;"));
+
+        layoutStations->addWidget(label_Labeler);
+
+        label_Storage = new QLabel(groupBox_Linea);
+        label_Storage->setObjectName(QString::fromUtf8("label_Storage"));
+        label_Storage->setAlignment(Qt::AlignCenter);
+        label_Storage->setMinimumSize(QSize(150, 80));
+        label_Storage->setStyleSheet(QString::fromUtf8("background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;"));
+
+        layoutStations->addWidget(label_Storage);
+
 
         layoutLinea->addLayout(layoutStations);
 
@@ -223,6 +241,8 @@ public:
         label_Assembler->setText(QCoreApplication::translate("MainWindow", "\360\237\224\247 Ensamblaje", nullptr));
         label_Tester->setText(QCoreApplication::translate("MainWindow", "\360\237\247\252 Inspecci\303\263n", nullptr));
         label_Packager->setText(QCoreApplication::translate("MainWindow", "\360\237\223\246 Empaquetado", nullptr));
+        label_Labeler->setText(QCoreApplication::translate("MainWindow", "\360\237\217\267\357\270\217 Etiquetado", nullptr));
+        label_Storage->setText(QCoreApplication::translate("MainWindow", "\360\237\217\255 Almacenamiento", nullptr));
         groupBox_Metrics->setTitle(QCoreApplication::translate("MainWindow", "M\303\251tricas y Estad\303\255sticas", nullptr));
         label_ProductsProcessed->setText(QCoreApplication::translate("MainWindow", "Productos procesados: 0", nullptr));
         label_ThreadsActive->setText(QCoreApplication::translate("MainWindow", "Hilos activos: 0", nullptr));

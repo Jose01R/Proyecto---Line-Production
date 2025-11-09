@@ -1,105 +1,141 @@
 #include "productioncontroller.h"
+#include <QDebug>
 
 ProductionController::ProductionController(QObject* parent)
-    : QObject(parent), productIdCounter(0) {
-
-    // Configura el temporizador para generar productos
+    : QObject(parent),
+    productIdCounter(0),
+    totalGoal(0),
+    completedCount(0)
+{
     productGenerationTimer = new QTimer(this);
-    // Conecta el timeout del temporizador a la función generateProduct()
     connect(productGenerationTimer, &QTimer::timeout, this, &ProductionController::generateProduct);
 
     qDebug() << "ProductionController creado.";
 }
 
 ProductionController::~ProductionController() {
-    stopProduction(); // Asegura que los hilos se detengan antes de eliminar objetos
-
-    // Libera la memoria de las estaciones y buffers
+    stopProduction();
     qDeleteAll(stationList);
     qDeleteAll(bufferList);
+}
 
-    qDebug() << "ProductionController destruido.";
+void ProductionController::setProductionGoal(int amount) {
+    totalGoal = amount;
+    completedCount = 0;
+    qDebug() << "Meta de producción establecida:" << totalGoal;
 }
 
 void ProductionController::setupProductionLine(int numberOfStations) {
-    if (numberOfStations < 1) {
-        qWarning() << "El número de estaciones debe ser al menos 1.";
-        return;
-    }
 
-    // Crear buffers: Necesitas (numberOfStations + 1) buffers para conectar todas las estaciones y un inicio/fin.
-    // Buffer 0: Entrada de productos (para el generador)
-    // Buffer 1 a (numberOfStations-1): Buffers intermedios
-    // Buffer numberOfStations: Salida final de productos
+    if (numberOfStations < 1) return;
+
+    bufferList.clear();
+    stationList.clear();
+
     for (int i = 0; i < numberOfStations + 1; ++i) {
         bufferList.append(new Buffer());
-        qDebug() << "Buffer " << i << " creado.";
+        qDebug() << "Buffer" << i << "creado.";
     }
 
-    // Crear estaciones y conectarlas con los buffers
-    // Asumiremos una línea simple: Ensamblaje -> Inspección -> ...
-    // Puedes personalizar esto para una línea más compleja (ej: múltiples ensambladores)
-
-    // Primera estación: Ensamblador
     Assembler* assembler = new Assembler(1, bufferList[0], bufferList[1], this);
     stationList.append(assembler);
-    // Conectar señales de la estación al controlador (para re-emitir o procesar)
     connect(assembler, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
     connect(assembler, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
-    qDebug() << "Estación 1: Ensamblaje agregada.";
 
-    // Estaciones intermedias (si hay más de 2 estaciones en total)
-    for (int i = 2; i <= numberOfStations; ++i) {
-        // Aquí podrías alternar entre Tester, otros tipos de estaciones, etc.
-        // Por simplicidad, añadiremos un Tester.
-        Tester* tester = new Tester(i, bufferList[i-1], bufferList[i], this);
-        stationList.append(tester);
-        connect(tester, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
-        connect(tester, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
-        qDebug() << "Estación " << i << ": Inspección agregada.";
-    }
+    Tester* tester1 = new Tester(2, bufferList[1], bufferList[2], this);
+    stationList.append(tester1);
+    connect(tester1, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester1, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
 
-    emit productionLineStatus("Línea de producción configurada con " + QString::number(stationList.size()) + " estaciones.");
+    Tester* tester2 = new Tester(3, bufferList[2], bufferList[3], this);
+    stationList.append(tester2);
+    connect(tester2, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester2, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
+
+    Tester* tester3 = new Tester(4, bufferList[3], bufferList[4], this);
+    stationList.append(tester3);
+    connect(tester3, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(tester3, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
+
+    Tester* storage = new Tester(5, bufferList[4], nullptr, this);
+    stationList.append(storage);
+    connect(storage, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
+    connect(storage, &Station::productFinishedProcessing, this, &ProductionController::onFinalProductFinished);
+
+    emit productionLineStatus("Línea configurada.");
 }
 
 void ProductionController::startProduction() {
-    qDebug() << "Iniciando producción...";
-    emit productionLineStatus("Producción Iniciada");
 
-    // Iniciar el temporizador para la generación de productos (ej: cada 2 segundos)
-    productGenerationTimer->start(2000);
+    if (totalGoal <= 0) {
+        emit productionLineStatus("Debe establecer meta antes de iniciar");
+        return;
+    }
 
-    // Iniciar todos los hilos de las estaciones
+    productGenerationTimer->start(1000);
+    emit productionLineStatus("Producción iniciada.");
+
     for (Station* station : stationList) {
         if (!station->isRunning()) {
-            station->start(); // Inicia el hilo de la estación
-            qDebug() << "Hilo de estación " << station->getName() << " iniciado.";
+            station->start();
         }
     }
 }
 
 void ProductionController::stopProduction() {
-    qDebug() << "Deteniendo producción...";
-    emit productionLineStatus("Producción Detenida");
+    productGenerationTimer->stop();
+    emit productionLineStatus("Producción detenida.");
 
-    // Detener el temporizador de generación de productos
-    if (productGenerationTimer->isActive()) {
-        productGenerationTimer->stop();
-    }
-
-    // Detener todos los hilos de las estaciones
     for (Station* station : stationList) {
-        if (station->isRunning()) {
-            station->stopStation(); // Solicita la detención segura del hilo
-            qDebug() << "Hilo de estación " << station->getName() << " detenido.";
-        }
+        station->stopStation();
     }
 }
 
 void ProductionController::generateProduct() {
-    Product* newProduct = new Product(productIdCounter++, "Electrodoméstico Genérico");
-    qDebug() << "Generando nuevo producto:" << newProduct->showInfo();
-    bufferList[0]->addProduct(newProduct);
-    emit newProductCreated(*newProduct); // o newProduct, según tu señal
 
+    if (completedCount >= totalGoal) {
+        stopProduction();
+        return;
+    }
+
+    Product* newProduct = new Product(productIdCounter++, "Electrodoméstico");
+    qDebug() << "Generando producto" << newProduct->showInfo();
+
+    if (!bufferList[0]->tryAddProduct(newProduct, 50)) {
+        qDebug() << "Buffer 0 lleno; reintento en el próximo tick";
+        delete newProduct;                  // o guárdalo para reintentar, como prefieras
+        return;
+    }
+
+    emit newProductCreated(*newProduct);
+}
+
+void ProductionController::onFinalProductFinished(const Product& product, const QString& stationName) {
+
+    completedCount++;
+
+    emit productStateChanged(product, stationName);
+
+    qDebug() << "Producto finalizado:" << completedCount << "/" << totalGoal;
+
+    if (completedCount >= totalGoal) {
+        stopProduction();
+        emit productionLineStatus("Meta alcanzada");
+    }
+}
+
+int ProductionController::getActiveThreadCount() const {
+    int active = 0;
+    for (auto station : stationList) {
+        if (station->isRunning()) active++;
+    }
+    return active;
+}
+
+int ProductionController::getBufferUsage(int index) const {
+    if (index < 0 || index >= bufferList.size())
+        return 0;
+
+    Buffer* b = bufferList[index];
+    return (b->size() * 100) / b->getCapacity();
 }

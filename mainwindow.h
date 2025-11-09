@@ -3,9 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include "buffer.h"
-#include "assembler.h"
-#include "tester.h"
+#include "productioncontroller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,34 +17,31 @@ public:
     ~MainWindow();
 
 private slots:
-    // Botones de la interfaz
+    // Botones
     void on_pushButton_Start_clicked();
     void on_pushButton_Stop_clicked();
     void on_pushButton_Pause_clicked();
     void on_pushButton_Reset_clicked();
 
-    // Señales de las estaciones
+    // Señales recibidas desde controller
     void onStationStatusUpdate(int stationId, const QString &status);
     void onProductFinishedProcessing(const Product &product, const QString &stationName);
+    void onProductionLineStatus(const QString& msg);
 
-    // Actualización periódica de métricas
+    // Métricas
     void updateMetrics();
 
 private:
     Ui::MainWindow *ui;
 
-    // Elementos lógicos
-    Buffer *buffer1;
-    Buffer *buffer2;
-    Assembler *assembler;
-    Tester *tester;
-
+    ProductionController *controller;
     QTimer *metricsTimer;
     int productsProcessed;
 
-    // Funciones auxiliares
     void setupConnections();
-    void updateStationVisual(const QString &stationName, const QString &status);
+    void updateStationVisual(int stationId, const QString &status);
 };
+
 #endif // MAINWINDOW_H
+
 

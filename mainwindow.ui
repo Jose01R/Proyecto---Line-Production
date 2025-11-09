@@ -78,7 +78,7 @@
      </widget>
     </item>
 
-    <!-- PANEL CENTRAL: ESTACIONES -->
+<!-- PANEL CENTRAL: ESTACIONES -->
     <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox_Linea">
       <property name="title">
@@ -87,6 +87,8 @@
       <layout class="QVBoxLayout" name="layoutLinea">
        <item>
         <layout class="QHBoxLayout" name="layoutStations">
+
+         <!-- ENSAMBLAJE -->
          <item>
           <widget class="QLabel" name="label_Assembler">
            <property name="text">
@@ -106,6 +108,8 @@
            </property>
           </widget>
          </item>
+
+         <!-- INSPECCIÓN -->
          <item>
           <widget class="QLabel" name="label_Tester">
            <property name="text">
@@ -125,6 +129,8 @@
            </property>
           </widget>
          </item>
+
+         <!-- EMPAQUETADO -->
          <item>
           <widget class="QLabel" name="label_Packager">
            <property name="text">
@@ -144,11 +150,55 @@
            </property>
           </widget>
          </item>
+
+         <!-- ETIQUETADO -->
+         <item>
+          <widget class="QLabel" name="label_Labeler">
+           <property name="text">
+            <string>🏷️ Etiquetado</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+
+         <!-- ALMACENAMIENTO -->
+         <item>
+          <widget class="QLabel" name="label_Storage">
+           <property name="text">
+            <string>🏭 Almacenamiento</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>80</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: lightgray; border: 2px solid gray; border-radius: 8px; font-weight: bold;</string>
+           </property>
+          </widget>
+         </item>
+
         </layout>
        </item>
       </layout>
      </widget>
     </item>
+
 
     <!-- PANEL LATERAL DERECHO: MÉTRICAS -->
     <item row="1" column="1">

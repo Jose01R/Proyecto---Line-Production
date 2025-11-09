@@ -21,6 +21,7 @@ protected:
     Buffer* inputBuffer; // Puntero al buffer de entrada de la estación
     Buffer* outputBuffer; // Puntero al buffer de salida de la estación
     volatile bool running; // Bandera para controlar la ejecución del hilo de forma segura
+    QString lastStatus;
 
 public:
     // Constructor

@@ -17,52 +17,59 @@ Station::~Station() {
 }
 
 void Station::run() {
+
     running = true;
-    qDebug() << name << " (ID:" << id << ") - Hilo iniciado.";
-    emit stationStatusUpdate(id, "Activa"); // Notifica a la GUI que la estación está activa
+
+    auto sendStatus = [&](const QString& s){
+        if (lastStatus != s) {
+            emit stationStatusUpdate(id, s);
+            lastStatus = s;
+        }
+    };
+
+    sendStatus("Activa");
 
     while (running) {
-        // Si no tiene buffer de entrada (por ejemplo, el generador), salta la lectura
+
+        Product* product = nullptr;
+
         if (inputBuffer) {
-            // Tomar producto del buffer de entrada (bloqueante si está vacío)
-            Product* product = inputBuffer->removeProduct(); // 👈 ahora devuelve puntero
+            product = inputBuffer->removeProduct();
 
-            if (!running || !product) break; // Verifica bandera y puntero
+            if (!running) break;
 
-            // Procesar el producto
-            qDebug() << name << " procesando producto ID:" << product->getId()
-                     << "(Estado:" << product->getCurrentState() << ")";
-            emit stationStatusUpdate(id, "Procesando Producto " + QString::number(product->getId()));
-
-            processProduct(*product); // 👈 pasa referencia, sin copiar
-
-            // Enviar producto al buffer de salida (si existe)
-            if (outputBuffer) {
-                qDebug() << name << " terminó de procesar y envió producto ID:" << product->getId()
-                    << "(Estado:" << product->getCurrentState() << ")";
-                outputBuffer->addProduct(product);
+            if (!product) {
+                sendStatus("Esperando");   // ✅ si quieres mostrarlo
+                QThread::msleep(120);
+                continue;
             }
-
-            // Emite señales para actualizar la GUI
-            emit productFinishedProcessing(*product, name);
-            emit stationStatusUpdate(id, "Esperando"); // La estación espera por el siguiente producto
         } else {
-            // Si no hay buffer de entrada (como en el generador), solo duerme un poco
             QThread::msleep(100);
+            continue;
         }
+
+        sendStatus("Procesando Producto " + QString::number(product->getId()));
+
+        processProduct(*product);
+
+        if (outputBuffer) {
+            outputBuffer->addProduct(product);
+        }
+
+        emit productFinishedProcessing(*product, name);
+
+        sendStatus("Esperando");   // ✅ si quieres mostrarlo
     }
 
-    qDebug() << name << " (ID:" << id << ") - Hilo detenido.";
-    emit stationStatusUpdate(id, "Detenida"); // Notifica a la GUI que la estación está detenida
+    sendStatus("Detenida");       // ✅ si quieres mostrarlo
 }
+
+
+
 
 void Station::stopStation() {
     running = false;
-
-    // Despierta cualquier hilo bloqueado en wait()
-    if (inputBuffer)
-        inputBuffer->addProduct(nullptr); // 👈 evita bloqueo eterno
-
-    wait(); // Espera a que el método run() del hilo termine su ejecución
+    //wait();
 }
+
 
