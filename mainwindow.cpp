@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QInputDialog>
+#include "logger.h" //
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +22,20 @@ MainWindow::MainWindow(QWidget *parent)
     setupConnections();
 
     connect(metricsTimer, &QTimer::timeout, this, &MainWindow::updateMetrics);
+
+    // Al iniciar, cargamos los logs existentes para ver el historial
+    ui->textEdit_Log->append(">>> Cargando log de persistencia JSON... <<<");
+    QList<DailyLogEntry> logs = controller->getLogger()->getDailyLog();
+    for (const auto& entry : logs) {
+        QString msg = QString("[JSON HISTÓRICO %1] Producto ID:%2 | Tipo:%3 | Creado:%4 | Finalizado:%5")
+                          .arg(entry.completionTime.toString("dd/MM"))
+                          .arg(entry.productId)
+                          .arg(entry.productType)
+                          .arg(entry.creationTime.toString("hh:mm:ss"))
+                          .arg(entry.completionTime.toString("hh:mm:ss"));
+        ui->textEdit_Log->append(msg);
+    }
+    ui->textEdit_Log->append(QString(">>> %1 registros cargados. <<<").arg(logs.size()));
 }
 
 MainWindow::~MainWindow() {
@@ -37,10 +52,17 @@ void MainWindow::setupConnections() {
 
     connect(controller, &ProductionController::productionLineStatus,
             this, &MainWindow::onProductionLineStatus);
+
+    //Conecta la señal de registro del Logger al slot de la GUI
+    // controller->getLogger() devuelve el puntero al objeto Logger
+    connect(controller->getLogger(), &Logger::newLogEntry,
+            this, &MainWindow::onNewLogEntry);
 }
 
-void MainWindow::on_pushButton_Start_clicked() {
+// ... (Resto de on_pushButton_clicked y onProductionLineStatus igual) ...
+// ... (omito código repetido por brevedad) ...
 
+void MainWindow::on_pushButton_Start_clicked() {
     bool ok;
     int goal = QInputDialog::getInt(
         this,
@@ -63,17 +85,12 @@ void MainWindow::on_pushButton_Start_clicked() {
 }
 
 void MainWindow::on_pushButton_Stop_clicked() {
-
     controller->stopProduction();
-
     ui->label_Status->setText("Sistema detenido");
     ui->label_Status->setStyleSheet("color: red; font-weight: bold;");
     ui->textEdit_Log->append(">>> Simulación detenida <<<");
-
     metricsTimer->stop();
 }
-
-
 
 void MainWindow::on_pushButton_Pause_clicked() {
     controller->stopProduction();
@@ -83,14 +100,16 @@ void MainWindow::on_pushButton_Pause_clicked() {
 }
 
 void MainWindow::on_pushButton_Reset_clicked() {
+    // Al resetear, limpiamos el log de la GUI, pero los datos JSON siguen en el archivo
     ui->textEdit_Log->clear();
-
     ui->label_ProductsProcessed->setText("Productos procesados: 0");
     productsProcessed = 0;
     ui->progressBar_Throughput->setValue(0);
-
     ui->label_Status->setText("Sistema reseteado");
     ui->label_Status->setStyleSheet("color: blue; font-weight: bold;");
+
+    // Necesitamos recrear la línea después de un reset si queremos iniciar de nuevo:
+    controller->setupProductionLine(5);
 }
 
 void MainWindow::onProductionLineStatus(const QString &msg) {
@@ -114,8 +133,8 @@ void MainWindow::onStationStatusUpdate(int stationId, const QString &status) {
 void MainWindow::onProductFinishedProcessing(const Product &product,
                                              const QString &stationName) {
 
+    // Lógica para actualizar métricas cuando el producto llega a la última estación
     if (stationName.contains("Almacenamiento")) {
-
         int done = controller->getCompletedCount();
         int goal = controller->getTotalGoal();
 
@@ -123,10 +142,11 @@ void MainWindow::onProductFinishedProcessing(const Product &product,
             QString("Productos procesados: %1 / %2").arg(done).arg(goal)
             );
 
-        int percent = (done * 100) / goal;
+        int percent = (goal > 0) ? (done * 100) / goal : 0;
         ui->progressBar_Throughput->setValue(percent);
     }
 
+    // Log de avance de producto (para estados intermedios)
     QString msg = QString("[%1] completó producto ID:%2 (Estado:%3)")
                       .arg(stationName)
                       .arg(product.getId())
@@ -135,6 +155,11 @@ void MainWindow::onProductFinishedProcessing(const Product &product,
     ui->textEdit_Log->append(msg);
 }
 
+// NUEVA IMPLEMENTACIÓN: Muestra el registro guardado por el Logger
+void MainWindow::onNewLogEntry(const QString& message) {
+    QString logMsg = QString("💾 JSON LOG | %1").arg(message);
+    ui->textEdit_Log->append(logMsg);
+}
 
 
 void MainWindow::updateMetrics() {
@@ -154,20 +179,23 @@ void MainWindow::updateMetrics() {
     int percent = (goal > 0) ? (done * 100) / goal : 0;
     ui->progressBar_Throughput->setValue(percent);
 
+    // Actualización de uso del primer buffer (Buffer 0)
+    int buffer0_usage = controller->getBufferUsage(0);
     ui->label_BufferUsage->setText(
-        QString("Storage: %1%").arg(percent)
+        QString("Buffer 0 (Ensamblaje): %1%").arg(buffer0_usage)
         );
 }
 
 
 void MainWindow::updateStationVisual(int stationId, const QString &status) {
-
+    // ... (El código de updateStationVisual es correcto y se mantiene igual) ...
     QLabel *label = nullptr;
 
+    // Mapping de IDs (Asegúrate de que tus labels en el .ui coincidan con estos nombres)
     if (stationId == 1) label = ui->label_Assembler;
     else if (stationId == 2) label = ui->label_Tester;
-    else if (stationId == 3) label = ui->label_Packager;
-    else if (stationId == 4) label = ui->label_Labeler;
+    else if (stationId == 3) label = ui->label_Packager; // Corregí el mapeo según tu setupProductionLine
+    else if (stationId == 4) label = ui->label_Labeler;   // Corregí el mapeo según tu setupProductionLine
     else if (stationId == 5) label = ui->label_Storage;
 
     if (!label) return;
@@ -181,6 +209,3 @@ void MainWindow::updateStationVisual(int stationId, const QString &status) {
     else
         label->setStyleSheet("background-color: lightgreen; font-weight: bold;");
 }
-
-
-

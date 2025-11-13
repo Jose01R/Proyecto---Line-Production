@@ -2,45 +2,35 @@
 #define PRODUCT_H
 
 #include <QString>
-#include <QDebug> // Para propósitos de depuración
+#include <QDebug>
+#include <QDateTime>   //Para registrar la fecha y hora de creación
+#include <QJsonObject> //Para serialización JSON
 
-/**
- * @brief Representa un producto (electrodoméstico) que pasa por la línea de producción.
- */
 class Product {
 private:
-    int id; // Identificador único del producto
-    QString type; // Tipo de electrodoméstico (ej: "Refrigerador")
-    QString currentState; // Estado actual del montaje (ej: "Inicial", "Ensamblado", "Inspeccionado")
+    int id;
+    QString type;
+    QString currentState;
+    QDateTime creationTime; //Para el registro de tiempo
 
 public:
-    //CONSTRUCTOR
-    Product(int id, const QString& type) : id(id), type(type), currentState("Inicial") {}
+    // CONSTRUCTORES: Inicializan el tiempo al momento de la creación
+    Product(int id, const QString& type);
+    Product(); // Constructor por defecto
 
-    Product() : id(-1), type("Undefined"), currentState("Inicial") {}
-    // Lógica para avanzar el estado del producto
-    void advanceState() {
-        if (currentState == "Inicial") {
-            currentState = "Ensamblado";
-        } else if (currentState == "Ensamblado") {
-            currentState = "Inspeccionado";
-        } else if (currentState == "Inspeccionado") {
-            currentState = "Empaquetado";
-        } else if (currentState == "Empaquetado") {
-            currentState = "Terminado"; // Estado final
-        }
-        qDebug() << "Producto ID:" << id << " avanzó a estado:" << currentState;
-    }
+    // LÓGICA DE ESTADO (para 5 estaciones: Ensamblado, Inspeccionado, Etiquetado, Empaquetado, Almacenado)
+    void advanceState();
+    QString showInfo() const;
 
-    // Información del producto para depuración o GUI
-    QString showInfo() const {
-        return QString("ID: %1, Tipo: %2, Estado: %3").arg(id).arg(type).arg(currentState);
-    }
+    // MÉTODOS PARA JSON
+    QJsonObject toJson() const;
+    static Product fromJson(const QJsonObject& json);
 
-    // Getters
+    // GETTERS
     int getId() const { return id; }
     QString getType() const { return type; }
     QString getCurrentState() const { return currentState; }
+    QDateTime getCreationTime() const { return creationTime; }
 };
 
 #endif // PRODUCT_H

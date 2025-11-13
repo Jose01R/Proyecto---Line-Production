@@ -9,18 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    assembler.cpp \
+    applianceGenerator.cpp \
     buffer.cpp \
+    logger.cpp \
     main.cpp \
     mainwindow.cpp \
+    product.cpp \
     productioncontroller.cpp \
-    station.cpp \
-    tester.cpp
+    station.cpp
 
 HEADERS += \
+    applianceGenerator.h \
     assembler.h \
     buffer.h \
     labeler.h \
+    logger.h \
     mainwindow.h \
     packager.h \
     product.h \

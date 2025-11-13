@@ -3,8 +3,10 @@
 #include <QApplication>
 #include <QMetaType>
 #include "product.h"
+
 int main(int argc, char *argv[])
 {
+    // Registro de MetaTipos
     qRegisterMetaType<Product>("Product");
     qRegisterMetaType<Product>("Product&");
 

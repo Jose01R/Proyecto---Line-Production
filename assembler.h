@@ -4,13 +4,13 @@
 #include "station.h"
 
 /**
- * @brief Estación específica para ensamblar piezas de productos.
+ * Estación para ensamblar piezas de productos
  */
 class Assembler : public Station {
-    Q_OBJECT // Necesario para Signals/Slots si se usaran específicos de esta clase
+    Q_OBJECT //Signals/Slots
 
 public:
-    // Constructor que llama al constructor de la clase base Station
+    // Constructor que llama al constructor de clase Station
     Assembler(int id, Buffer* input, Buffer* output, QObject* parent = nullptr)
         : Station(id, "Ensamblaje", "Ensamblar Pieza", input, output, parent) {
         qDebug() << "Estación de Ensamblaje (ID:" << id << ") creada.";

@@ -6,9 +6,16 @@
 #include <QTimer>
 #include "station.h"
 #include "buffer.h"
+#include "product.h"
+
+// Inclusiones de las clases
 #include "assembler.h"
 #include "tester.h"
-#include "product.h"
+#include "labeler.h"
+#include "packager.h"
+#include "storage.h"
+#include "applianceGenerator.h"
+#include "logger.h"
 
 class ProductionController : public QObject {
     Q_OBJECT
@@ -18,9 +25,15 @@ private:
     QList<Buffer*> bufferList;
     QTimer* productGenerationTimer;
 
-    int productIdCounter;
+    // Ajustado el orden para coincidir con la lista de inicialización del constructor (para -Wreorder)
     int totalGoal;
     int completedCount;
+
+    // El logger y el generator deben ir después si se inicializan con miembros previos
+    Logger *logger;
+    ApplianceGenerator generator;
+
+    int productIdCounter;
 
 public:
     explicit ProductionController(QObject* parent = nullptr);
@@ -31,6 +44,11 @@ public:
 
     int getTotalGoal() const { return totalGoal; }
     int getCompletedCount() const { return completedCount; }
+
+    // NUEVO GETTER: Permite a MainWindow acceder a la lista para el log visual.
+    const QList<Station*>& getStationList() const { return stationList; }
+
+    Logger* getLogger() const { return logger; }
 
     int getActiveThreadCount() const;
     int getBufferUsage(int index) const;
@@ -49,4 +67,3 @@ signals:
 };
 
 #endif // PRODUCTIONCONTROLLER_H
-

@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[16];
-    char stringdata0[259];
+    QByteArrayData data[18];
+    char stringdata0[281];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -47,7 +47,9 @@ QT_MOC_LITERAL(11, 198, 7), // "product"
 QT_MOC_LITERAL(12, 206, 11), // "stationName"
 QT_MOC_LITERAL(13, 218, 22), // "onProductionLineStatus"
 QT_MOC_LITERAL(14, 241, 3), // "msg"
-QT_MOC_LITERAL(15, 245, 13) // "updateMetrics"
+QT_MOC_LITERAL(15, 245, 13), // "onNewLogEntry"
+QT_MOC_LITERAL(16, 259, 7), // "message"
+QT_MOC_LITERAL(17, 267, 13) // "updateMetrics"
 
     },
     "MainWindow\0on_pushButton_Start_clicked\0"
@@ -57,7 +59,7 @@ QT_MOC_LITERAL(15, 245, 13) // "updateMetrics"
     "onStationStatusUpdate\0stationId\0status\0"
     "onProductFinishedProcessing\0Product\0"
     "product\0stationName\0onProductionLineStatus\0"
-    "msg\0updateMetrics"
+    "msg\0onNewLogEntry\0message\0updateMetrics"
 };
 #undef QT_MOC_LITERAL
 
@@ -67,7 +69,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -75,14 +77,15 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   54,    2, 0x08 /* Private */,
-       3,    0,   55,    2, 0x08 /* Private */,
-       4,    0,   56,    2, 0x08 /* Private */,
-       5,    0,   57,    2, 0x08 /* Private */,
-       6,    2,   58,    2, 0x08 /* Private */,
-       9,    2,   63,    2, 0x08 /* Private */,
-      13,    1,   68,    2, 0x08 /* Private */,
-      15,    0,   71,    2, 0x08 /* Private */,
+       1,    0,   59,    2, 0x08 /* Private */,
+       3,    0,   60,    2, 0x08 /* Private */,
+       4,    0,   61,    2, 0x08 /* Private */,
+       5,    0,   62,    2, 0x08 /* Private */,
+       6,    2,   63,    2, 0x08 /* Private */,
+       9,    2,   68,    2, 0x08 /* Private */,
+      13,    1,   73,    2, 0x08 /* Private */,
+      15,    1,   76,    2, 0x08 /* Private */,
+      17,    0,   79,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -92,6 +95,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::Int, QMetaType::QString,    7,    8,
     QMetaType::Void, 0x80000000 | 10, QMetaType::QString,   11,   12,
     QMetaType::Void, QMetaType::QString,   14,
+    QMetaType::Void, QMetaType::QString,   16,
     QMetaType::Void,
 
        0        // eod
@@ -110,7 +114,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->onStationStatusUpdate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
         case 5: _t->onProductFinishedProcessing((*reinterpret_cast< const Product(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
         case 6: _t->onProductionLineStatus((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 7: _t->updateMetrics(); break;
+        case 7: _t->onNewLogEntry((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 8: _t->updateMetrics(); break;
         default: ;
         }
     }
@@ -145,13 +150,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 9)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 9;
     }
     return _id;
 }

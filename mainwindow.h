@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include "productioncontroller.h"
+#include "logger.h" //Necesario para acceder a las señales del Logger
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,6 +29,9 @@ private slots:
     void onProductFinishedProcessing(const Product &product, const QString &stationName);
     void onProductionLineStatus(const QString& msg);
 
+    //Slot para recibir la notificación de registro JSON desde el Logger
+    void onNewLogEntry(const QString& message);
+
     // Métricas
     void updateMetrics();
 
@@ -43,5 +47,3 @@ private:
 };
 
 #endif // MAINWINDOW_H
-
-
