@@ -12,30 +12,30 @@
  * Hereda de QThread para ejecutar la lógica de procesamiento en un hilo separado.
  */
 class Station : public QThread {
-    Q_OBJECT //para la comunicación Signals/Slots
+    Q_OBJECT
 
 protected:
-    int id; //ID de la estación
-    QString name; // Nombre de la estación
-    QString taskType; //Tipo tarea que realiza (Ensamblar Pieza, Inspeccionar Calidad)
-    Buffer* inputBuffer; // Puntero al buffer de entrada de la estación
-    Buffer* outputBuffer; // Puntero al buffer de salida de la estación
-    volatile bool running; // Bandera para controlar ejecución del hilo de forma segura
-    QString lastStatus;
+    int id;              // ID de la estación
+    QString name;        // Nombre de la estación
+    QString taskType;    // Tipo de tarea
+    Buffer* inputBuffer; // Buffer de entrada
+    Buffer* outputBuffer;// Buffer de salida
+    volatile bool running; // Control de ejecución
+    QString lastStatus;  // Último estado enviado (para evitar spam)
 
 public:
-    // Constructor
-    Station(int id, const QString& name, const QString& taskType, Buffer* input, Buffer* output, QObject* parent = nullptr);
+    Station(int id, const QString& name, const QString& taskType,
+            Buffer* input, Buffer* output, QObject* parent = nullptr);
 
-    // Destructor --> destrucción de clases derivadas
     ~Station() override;
 
-    // Método virtual puro: la lógica específica de procesamiento debe ser implementada por las clases derivadas
+    // Lógica específica por estación (Assembler, Tester, etc.)
     virtual void processProduct(Product& product) = 0;
 
-    //punto de entrada para la ejecución del hilo
+    // Hilo
     void run() override;
-    //detener el hilo de la estación
+
+    // Detener estación sin congelar GUI
     void stopStation();
 
     // Getters
@@ -43,10 +43,12 @@ public:
     int getId() const { return id; }
 
 signals:
-    // Señal para actualizar la GUI con el estado de la estación
+    // Estado de la estación (para GUI)
     void stationStatusUpdate(int stationId, const QString& status);
-    // Señal para notificar que un producto ha terminado de ser procesado por esta estación
+
+    // Producto completado en esta estación
     void productFinishedProcessing(const Product& product, const QString& stationName);
 };
 
 #endif // STATION_H
+

@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     applianceGenerator.cpp \
     buffer.cpp \
+    historywindow.cpp \
     logger.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,6 +23,7 @@ HEADERS += \
     applianceGenerator.h \
     assembler.h \
     buffer.h \
+    historywindow.h \
     labeler.h \
     logger.h \
     mainwindow.h \
@@ -33,6 +35,7 @@ HEADERS += \
     tester.h
 
 FORMS += \
+    historywindow.ui \
     mainwindow.ui
 
 # Default rules for deployment.

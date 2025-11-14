@@ -5,6 +5,7 @@
 #include <QTimer>
 #include "productioncontroller.h"
 #include "logger.h" //Necesario para acceder a las señales del Logger
+#include "historywindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,7 +42,7 @@ private:
     ProductionController *controller;
     QTimer *metricsTimer;
     int productsProcessed;
-
+    void openHistoryWindow();
     void setupConnections();
     void updateStationVisual(int stationId, const QString &status);
 };

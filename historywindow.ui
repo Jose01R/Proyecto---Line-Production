@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HistoryWindow</class>
+ <widget class="QDialog" name="HistoryWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Historial de Producción</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <item>
+    <widget class="QTableWidget" name="tableHistory">
+     <column>
+      <property name="text">
+       <string>ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Tipo</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Creado</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Finalizado</string>
+      </property>
+     </column>
+
+     <property name="columnCount">
+      <number>4</number>
+     </property>
+     <property name="rowCount">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPushButton" name="buttonClose">
+     <property name="text">
+      <string>Cerrar</string>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+

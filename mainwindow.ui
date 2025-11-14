@@ -55,12 +55,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_Reset">
+        <widget class="QPushButton" name="pushButton_History">
          <property name="text">
-          <string>♻ Reiniciar</string>
+          <string>📄 Historial</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold;</string>
          </property>
         </widget>
        </item>
+
        <item>
         <widget class="QLabel" name="label_Status">
          <property name="text">

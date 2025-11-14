@@ -48,7 +48,7 @@ void ProductionController::setProductionGoal(int amount) {
 
 void ProductionController::setupProductionLine(int numberOfStations) {
 
-    const int NUM_STATIONS = 5; // Hardcodeamos a 5 estaciones (Ass, Test, Label, Pack, Store)
+    const int NUM_STATIONS = 5;
 
     stopProduction();
     qDeleteAll(stationList);
@@ -56,29 +56,30 @@ void ProductionController::setupProductionLine(int numberOfStations) {
     stationList.clear();
     bufferList.clear();
 
-    //Creación de Buffers (Se necesitan 5 buffers para 5 estaciones)
     for (int i = 0; i < NUM_STATIONS; ++i) {
         bufferList.append(new Buffer());
     }
 
-    //Creación de Estaciones: B0 -> S1(Ass) -> B1 -> S2(Test) -> B2 -> S3(Label) -> B3 -> S4(Pack) -> B4 -> S5(Store)
-
     Assembler* s1 = new Assembler(1, bufferList[0], bufferList[1], this);
-    Tester* s2 = new Tester(2, bufferList[1], bufferList[2], this);
-    Labeler* s3 = new Labeler(3, bufferList[2], bufferList[3], this);
-    Packager* s4 = new Packager(4, bufferList[3], bufferList[4], this);
-    Storage* s5 = new Storage(5, bufferList[4], nullptr, this); // S5 es Storage y termina la línea
+    Tester*    s2 = new Tester(2, bufferList[1], bufferList[2], this);
+    Labeler*   s3 = new Labeler(3, bufferList[2], bufferList[3], this);
+    Packager*  s4 = new Packager(4, bufferList[3], bufferList[4], this);
+    Storage*   s5 = new Storage(5, bufferList[4], nullptr, this);
 
     stationList.append({s1, s2, s3, s4, s5});
 
-    //Conexiones de Señales
     for (Station* station : stationList) {
-        connect(station, &Station::stationStatusUpdate, this, &ProductionController::updateStationStatus);
-        connect(station, &Station::productFinishedProcessing, this, &ProductionController::productStateChanged);
+        connect(station, &Station::stationStatusUpdate,
+                this, &ProductionController::updateStationStatus);
 
-        // Conexión específica para última estación (Storage)
         if (station->getId() == NUM_STATIONS) {
-            connect(station, &Station::productFinishedProcessing, this, &ProductionController::onFinalProductFinished);
+            // 👇 Solo Storage dispara onFinalProductFinished
+            connect(station, &Station::productFinishedProcessing,
+                    this, &ProductionController::onFinalProductFinished);
+        } else {
+            // 👇 Solo estaciones 1–4 disparan productStateChanged directo
+            connect(station, &Station::productFinishedProcessing,
+                    this, &ProductionController::productStateChanged);
         }
     }
 
@@ -102,13 +103,20 @@ void ProductionController::startProduction() {
 }
 
 void ProductionController::stopProduction() {
+
     productGenerationTimer->stop();
-    emit productionLineStatus("Producción detenida");
+    emit productionLineStatus("Producción detenida.");
+
+    // Despertar buffers para que los hilos salgan del bloqueo
+    for (Buffer* buffer : bufferList) {
+        buffer->forceWake();   // lo implementamos abajo
+    }
 
     for (Station* station : stationList) {
         station->stopStation();
     }
 }
+
 
 void ProductionController::generateProduct() {
 

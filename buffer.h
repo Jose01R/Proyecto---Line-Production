@@ -1,37 +1,37 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include <QObject>
-#include <QQueue>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QQueue>
 #include <QDebug>
-#include "product.h" // Necesario para QQueue<Product*>
+#include "product.h"
 
-class Buffer : public QObject {
-    Q_OBJECT
-
-public:
-    // Hacemos mutex y condition públicos para que Station::stopStation() pueda acceder a condition.wakeAll()
-    //El QMutex debe ser mutable para que funcione en metodos const (como isEmpty/size).
+class Buffer {
+private:
     mutable QMutex mutex;
     QWaitCondition condition;
-
-private:
     QQueue<Product*> queue;
     int capacity;
 
 public:
-    explicit Buffer(int maxCapacity = 5, QObject* parent = nullptr);
+    explicit Buffer(int maxCapacity = 5);
 
+    // Añade un producto, bloqueando si el buffer está lleno
     void addProduct(Product* product);
-    Product* removeProduct();
+
+    // Intenta añadir un producto con timeout (ms). Devuelve true si lo logró.
     bool tryAddProduct(Product* product, int timeoutMs);
 
-    // métodos const
+    // Saca un producto, bloqueando con timeout. Devuelve nullptr si no hay producto.
+    Product* removeProduct();
+
     bool isEmpty() const;
     int size() const;
     int getCapacity() const { return capacity; }
+
+    // Despierta a todos los hilos que estén esperando en este buffer
+    void forceWake();
 };
 
 #endif // BUFFER_H

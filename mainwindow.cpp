@@ -23,19 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(metricsTimer, &QTimer::timeout, this, &MainWindow::updateMetrics);
 
-    // Al iniciar, cargamos los logs existentes para ver el historial
-    ui->textEdit_Log->append(">>> Cargando log de persistencia JSON... <<<");
-    QList<DailyLogEntry> logs = controller->getLogger()->getDailyLog();
-    for (const auto& entry : logs) {
-        QString msg = QString("[JSON HISTÓRICO %1] Producto ID:%2 | Tipo:%3 | Creado:%4 | Finalizado:%5")
-                          .arg(entry.completionTime.toString("dd/MM"))
-                          .arg(entry.productId)
-                          .arg(entry.productType)
-                          .arg(entry.creationTime.toString("hh:mm:ss"))
-                          .arg(entry.completionTime.toString("hh:mm:ss"));
-        ui->textEdit_Log->append(msg);
-    }
-    ui->textEdit_Log->append(QString(">>> %1 registros cargados. <<<").arg(logs.size()));
+
 }
 
 MainWindow::~MainWindow() {
@@ -57,6 +45,11 @@ void MainWindow::setupConnections() {
     // controller->getLogger() devuelve el puntero al objeto Logger
     connect(controller->getLogger(), &Logger::newLogEntry,
             this, &MainWindow::onNewLogEntry);
+
+
+    connect(ui->pushButton_History, &QPushButton::clicked,
+            this, &MainWindow::openHistoryWindow);
+
 }
 
 // ... (Resto de on_pushButton_clicked y onProductionLineStatus igual) ...
@@ -208,4 +201,8 @@ void MainWindow::updateStationVisual(int stationId, const QString &status) {
         label->setStyleSheet("background-color: orange; font-weight: bold;");
     else
         label->setStyleSheet("background-color: lightgreen; font-weight: bold;");
+}
+void MainWindow::openHistoryWindow() {
+    HistoryWindow* hw = new HistoryWindow(controller->getLogger(), this);
+    hw->exec();  // ventana modal
 }

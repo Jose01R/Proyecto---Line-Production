@@ -1,23 +1,21 @@
 #include "station.h"
-#include <QThread>
 
-Station::Station(int id, const QString& name, const QString& taskType, Buffer* input, Buffer* output, QObject* parent)
-    : QThread(parent)
-    , id(id)
-    , name(name)
-    , taskType(taskType)
-    , inputBuffer(input)
-    , outputBuffer(output)
-    , running(false)
+Station::Station(int id, const QString& name, const QString& taskType,
+                 Buffer* input, Buffer* output, QObject* parent)
+    : QThread(parent),
+    id(id),
+    name(name),
+    taskType(taskType),
+    inputBuffer(input),
+    outputBuffer(output),
+    running(false),
+    lastStatus("")
 {
-    // Constructor
+    qDebug() << "Estación" << name << "(ID:" << id << ") creada.";
 }
 
 Station::~Station() {
-    // Si el hilo está corriendo, asegurar la detención segura (ProductionController debería hacerlo)
-    if (isRunning()) {
-        stopStation();
-    }
+    qDebug() << "Estación" << name << "(ID:" << id << ") destruida.";
 }
 
 void Station::run() {
@@ -37,65 +35,60 @@ void Station::run() {
 
         Product* product = nullptr;
 
-        // 1. Obtener producto del buffer de entrada (Bloqueante)
+        // Si tiene buffer de entrada, intenta obtener producto
         if (inputBuffer) {
-            sendStatus("Esperando");
 
             product = inputBuffer->removeProduct();
 
-            // Si el hilo fue detenido (stopStation) mientras esperaba
-            // Si el producto no es nullptr, fue obtenido just antes del 'stop',
-            // pero el loop ya está saliendo, por lo que debe ser liberado
+            // Si nos pidieron parar mientras esperábamos
             if (!running) {
-                if (product) delete product;
                 break;
             }
 
+            // Si no hay producto (timeout en buffer)
             if (!product) {
-                // Si el buffer devolviera nullptr (solo pasa con un timeout fallido en removeProduct)
+                sendStatus("Esperando");
+                QThread::msleep(120);
                 continue;
             }
+
         } else {
-            // Este bloque no se usa en este diseño (la generación es externa)
+            // Estación sin buffer de entrada
             QThread::msleep(100);
             continue;
         }
 
-        // 2. Procesar el producto
+        // ======== PROCESAR PRODUCTO ========
         sendStatus("Procesando Producto " + QString::number(product->getId()));
-        processProduct(*product);
 
-        // 3. Pasar a la siguiente etapa o finalizar
+        processProduct(*product);  // Lógica específica (Assembler/Tester/etc)
+
+        // Enviar producto al siguiente buffer si existe
         if (outputBuffer) {
-            // Estación intermedia: Pasa la propiedad del puntero al siguiente buffer
             outputBuffer->addProduct(product);
-            emit productFinishedProcessing(*product, name);
-
-        } else {
-            // ÚLTIMA ESTACIÓN (STORAGE)
-            // 3.1 Notifica finalización (para que el Logger actúe)
-            emit productFinishedProcessing(*product, name);
-
-            // 3.2. LIBERAR MEMORIA (único responsable de eliminar este objeto)
-            qDebug() << name << ": Eliminando Producto ID:" << product->getId() << " del heap (Fin de ciclo).";
-            delete product;
         }
 
-        sendStatus("Activa");
+        // Notificar que este producto terminó en esta estación
+        emit productFinishedProcessing(*product, name);
+
+        // La estación queda esperando siguiente producto
+        sendStatus("Esperando");
     }
 
+    // Al salir del while, estación detenida
     sendStatus("Detenida");
 }
 
 void Station::stopStation() {
     running = false;
 
-    //Despierta el hilo si está bloqueado en Buffer::removeProduct()
+    // Despertar el buffer de entrada (por si está bloqueada en removeProduct)
     if (inputBuffer) {
-        //la condición del buffer sea accesible
-        inputBuffer->condition.wakeAll();
+        inputBuffer->forceWake();
     }
 
-    // Espera a que la función run() termine
-    wait();
+    // NO llamamos wait() aquí para no congelar la GUI;
+    // Qt se encarga de limpiar el hilo al destruir el objeto si ya terminó.
 }
+
+
