@@ -87,8 +87,8 @@ void Station::stopStation() {
         inputBuffer->forceWake();
     }
 
-    // NO llamamos wait() aquí para no congelar la GUI;
-    // Qt se encarga de limpiar el hilo al destruir el objeto si ya terminó.
+    // NO llamamos wait() aquí para no congelar la GUI
+    // Qt se encarga de limpiar el hilo al destruir el objeto si ya terminó
 }
 
 

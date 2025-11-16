@@ -8,15 +8,17 @@
 #include <QJsonArray>
 #include <QFile>
 #include <QDateTime>
-#include "product.h" // Usaremos Product::toJson()
+#include <QMap>
+#include <QDate>
 
-// Estructura de datos para el registro en memoria
+#include "product.h"
+
+// Registro por producto terminado
 struct DailyLogEntry {
-    QDateTime completionTime; // Fecha y hora en que terminó
+    QDateTime completionTime;
     int productId;
     QString productType;
     QString finalStatus;
-    // NUEVO: Podríamos guardar el tiempo de creación del producto aquí también
     QDateTime creationTime;
 };
 
@@ -27,20 +29,33 @@ private:
     QString logFileName = "production_log.json";
     QList<DailyLogEntry> dailyLog;
 
+    // Estadísticas diarias en memoria:
+    // dailyTotalCount["2025-11-15"] = 8
+    QMap<QString, int> dailyTotalCount;
+
+    // dailyTypeCount["2025-11-15"]["Lavadora"] = 5
+    QMap<QString, QMap<QString,int>> dailyTypeCount;
+
+    // Fecha actual en memoria (para conveniencia)
+    QString todayString() const { return QDate::currentDate().toString(Qt::ISODate); }
+
 public:
     explicit Logger(QObject* parent = nullptr);
 
-    // Métodos de Persistencia
+    // Persistencia
     void saveLogToJson() const;
     void loadLogFromJson();
 
-    // Método para ser llamado por ProductionController/Storage al terminar un producto
+    // Llamar cuando un producto termina (estado Almacenado)
     void recordCompletion(const Product& product);
 
     QList<DailyLogEntry> getDailyLog() const { return dailyLog; }
 
+    // Accesores para UI o reportes
+    int getTotalProducedForDate(const QString& date) const;
+    QMap<QString,int> getTypeCountsForDate(const QString& date) const;
+
 signals:
-    // Señal para notificar a la GUI que un producto fue registrado
     void newLogEntry(const QString& message);
 };
 

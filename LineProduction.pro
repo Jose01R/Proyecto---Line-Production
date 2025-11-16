@@ -11,6 +11,9 @@ CONFIG += c++17
 SOURCES += \
     applianceGenerator.cpp \
     buffer.cpp \
+    generalcleanthreads.cpp \
+    generallogs.cpp \
+    generalstats.cpp \
     historywindow.cpp \
     logger.cpp \
     main.cpp \
@@ -23,6 +26,10 @@ HEADERS += \
     applianceGenerator.h \
     assembler.h \
     buffer.h \
+    generalcleanthreads.h \
+    generallogs.h \
+    generalstats.h \
+    generalthread.h \
     historywindow.h \
     labeler.h \
     logger.h \

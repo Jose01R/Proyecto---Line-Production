@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QInputDialog>
-#include "logger.h" //
+#include <QDateTime>
+#include "logger.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,6 +10,13 @@ MainWindow::MainWindow(QWidget *parent)
     , controller(new ProductionController(this))
     , metricsTimer(new QTimer(this))
     , productsProcessed(0)
+
+    // ===============================
+    // HILOS DE MANTENIMIENTO
+    // ===============================
+    , cleanThread(new GeneralCleanThreads(this))
+    , logsThread(new GeneralLogs(controller, this))
+    , statsThread(new GeneralStats(controller, this))
 {
     ui->setupUi(this);
 
@@ -16,17 +24,32 @@ MainWindow::MainWindow(QWidget *parent)
     ui->textEdit_Log->setReadOnly(true);
     ui->tableWidget_Threads->setRowCount(5);
 
-    // Crear línea de producción con 5 estaciones mínimo
+    // Crear línea con 5 estaciones
     controller->setupProductionLine(5);
 
     setupConnections();
 
     connect(metricsTimer, &QTimer::timeout, this, &MainWindow::updateMetrics);
 
-
+    // ===============================
+    // INICIO DE HILOS
+    // ===============================
+    cleanThread->start();
+    logsThread->start();
+    statsThread->start();
 }
 
 MainWindow::~MainWindow() {
+
+    cleanThread->stopSafely();
+    cleanThread->wait();
+
+    logsThread->stopSafely();
+    logsThread->wait();
+
+    statsThread->stopSafely();
+    statsThread->wait();
+
     delete ui;
 }
 
@@ -41,21 +64,76 @@ void MainWindow::setupConnections() {
     connect(controller, &ProductionController::productionLineStatus,
             this, &MainWindow::onProductionLineStatus);
 
-    //Conecta la señal de registro del Logger al slot de la GUI
-    // controller->getLogger() devuelve el puntero al objeto Logger
     connect(controller->getLogger(), &Logger::newLogEntry,
             this, &MainWindow::onNewLogEntry);
-
 
     connect(ui->pushButton_History, &QPushButton::clicked,
             this, &MainWindow::openHistoryWindow);
 
+    // ======================================
+    // HILOS DE MANTENIMIENTO
+    // ======================================
+
+    connect(cleanThread, &GeneralThread::threadMessage,
+            this, &MainWindow::handleThreadMessage);
+
+    connect(logsThread, &GeneralThread::threadMessage,
+            this, &MainWindow::handleThreadMessage);
+
+    connect(statsThread, &GeneralThread::threadMessage,
+            this, &MainWindow::handleThreadMessage);
+
+    connect(cleanThread, &GeneralCleanThreads::requestSystemReset,
+            this, &MainWindow::handleSystemResetRequest);
+
+    connect(statsThread, &GeneralStats::statsDataReady,
+            this, &MainWindow::handleStatsData);
 }
 
-// ... (Resto de on_pushButton_clicked y onProductionLineStatus igual) ...
-// ... (omito código repetido por brevedad) ...
+/* ===============================================================
+   MENSAJES DE LOS HILOS
+   =============================================================== */
+void MainWindow::handleThreadMessage(const QString& name,
+                                     const QString& action,
+                                     const QString& message)
+{
+    QString logMsg =
+        QString("[%1] [HILO %2] %3: %4")
+            .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
+            .arg(name)
+            .arg(action)
+            .arg(message);
+
+    ui->textEdit_Log->append(logMsg);
+}
+
+void MainWindow::handleSystemResetRequest() {
+
+    metricsTimer->stop();
+    controller->stopProduction();
+    on_pushButton_Reset_clicked();
+
+    ui->label_Status->setText("Reseteo forzado por mantenimiento");
+
+    ui->textEdit_Log->append(
+        QString("[%1] [MainWindow] Limpieza forzada ejecutada")
+            .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
+        );
+}
+
+void MainWindow::handleStatsData(const QString& statsJson) {
+
+    ui->textEdit_Log->append(
+        "<span style='color:#4CAF50;'>📊 Estadísticas listas para graficar.</span>"
+        );
+}
+
+/* ===============================================================
+   BOTONES PRINCIPALES
+   =============================================================== */
 
 void MainWindow::on_pushButton_Start_clicked() {
+
     bool ok;
     int goal = QInputDialog::getInt(
         this,
@@ -70,44 +148,49 @@ void MainWindow::on_pushButton_Start_clicked() {
     controller->setProductionGoal(goal);
     controller->startProduction();
 
-    ui->label_Status->setText("Producción en marcha...");
-    ui->label_Status->setStyleSheet("color: green; font-weight: bold;");
-    ui->textEdit_Log->append(">>> Simulación iniciada <<<");
+    ui->label_Status->setText("Producción en marcha");
+    ui->label_Status->setStyleSheet("color: green; font-weight:bold;");
 
+    ui->textEdit_Log->append(">>> Simulación iniciada <<<");
     metricsTimer->start(1000);
 }
 
 void MainWindow::on_pushButton_Stop_clicked() {
+
     controller->stopProduction();
-    ui->label_Status->setText("Sistema detenido");
-    ui->label_Status->setStyleSheet("color: red; font-weight: bold;");
+    ui->label_Status->setText("Producción detenida");
+    ui->label_Status->setStyleSheet("color: red; font-weight:bold;");
+
     ui->textEdit_Log->append(">>> Simulación detenida <<<");
     metricsTimer->stop();
 }
 
 void MainWindow::on_pushButton_Pause_clicked() {
+
     controller->stopProduction();
-    ui->label_Status->setText("Simulación pausada");
-    ui->label_Status->setStyleSheet("color: orange; font-weight: bold;");
+    ui->label_Status->setText("Producción pausada");
+    ui->label_Status->setStyleSheet("color: orange; font-weight:bold;");
+
     ui->textEdit_Log->append(">>> Simulación pausada <<<");
 }
 
 void MainWindow::on_pushButton_Reset_clicked() {
-    // Al resetear, limpiamos el log de la GUI, pero los datos JSON siguen en el archivo
+
     ui->textEdit_Log->clear();
     ui->label_ProductsProcessed->setText("Productos procesados: 0");
+
     productsProcessed = 0;
+
     ui->progressBar_Throughput->setValue(0);
     ui->label_Status->setText("Sistema reseteado");
-    ui->label_Status->setStyleSheet("color: blue; font-weight: bold;");
+    ui->label_Status->setStyleSheet("color: blue; font-weight:bold;");
 
-    // Necesitamos recrear la línea después de un reset si queremos iniciar de nuevo:
     controller->setupProductionLine(5);
 }
 
-void MainWindow::onProductionLineStatus(const QString &msg) {
-    ui->textEdit_Log->append(msg);
-}
+/* ===============================================================
+   ACTUALIZACIÓN DE ESTACIONES
+   =============================================================== */
 
 void MainWindow::onStationStatusUpdate(int stationId, const QString &status) {
 
@@ -123,11 +206,37 @@ void MainWindow::onStationStatusUpdate(int stationId, const QString &status) {
     updateStationVisual(stationId, status);
 }
 
-void MainWindow::onProductFinishedProcessing(const Product &product,
-                                             const QString &stationName) {
+void MainWindow::updateStationVisual(int stationId, const QString &status) {
 
-    // Lógica para actualizar métricas cuando el producto llega a la última estación
+    QLabel *label = nullptr;
+
+    if (stationId == 1) label = ui->label_Assembler;
+    else if (stationId == 2) label = ui->label_Tester;
+    else if (stationId == 3) label = ui->label_Packager;
+    else if (stationId == 4) label = ui->label_Labeler;
+    else if (stationId == 5) label = ui->label_Storage;
+
+    if (!label) return;
+
+    if (status.contains("Procesando"))
+        label->setStyleSheet("background-color: yellow; font-weight:bold;");
+    else if (status.contains("Detenida"))
+        label->setStyleSheet("background-color: lightgray; font-weight:bold;");
+    else if (status.contains("Esperando"))
+        label->setStyleSheet("background-color: orange; font-weight:bold;");
+    else
+        label->setStyleSheet("background-color: lightgreen; font-weight:bold;");
+}
+
+/* ===============================================================
+   FINALIZACIÓN DE PRODUCTO
+   =============================================================== */
+
+void MainWindow::onProductFinishedProcessing(const Product &product,
+                                             const QString &stationName)
+{
     if (stationName.contains("Almacenamiento")) {
+
         int done = controller->getCompletedCount();
         int goal = controller->getTotalGoal();
 
@@ -135,25 +244,33 @@ void MainWindow::onProductFinishedProcessing(const Product &product,
             QString("Productos procesados: %1 / %2").arg(done).arg(goal)
             );
 
-        int percent = (goal > 0) ? (done * 100) / goal : 0;
-        ui->progressBar_Throughput->setValue(percent);
+        ui->progressBar_Throughput->setValue(
+            goal > 0 ? (done * 100) / goal : 0
+            );
     }
 
-    // Log de avance de producto (para estados intermedios)
-    QString msg = QString("[%1] completó producto ID:%2 (Estado:%3)")
-                      .arg(stationName)
-                      .arg(product.getId())
-                      .arg(product.getCurrentState());
-
-    ui->textEdit_Log->append(msg);
+    ui->textEdit_Log->append(
+        QString("[%1] completó producto ID:%2 (Estado:%3)")
+            .arg(stationName)
+            .arg(product.getId())
+            .arg(product.getCurrentState())
+        );
 }
 
-// NUEVA IMPLEMENTACIÓN: Muestra el registro guardado por el Logger
+/* ===============================================================
+   LOG JSON
+   =============================================================== */
+
 void MainWindow::onNewLogEntry(const QString& message) {
-    QString logMsg = QString("💾 JSON LOG | %1").arg(message);
-    ui->textEdit_Log->append(logMsg);
+
+    ui->textEdit_Log->append(
+        QString("<span style='color:#888;'>💾 JSON LOG → %1</span>").arg(message)
+        );
 }
 
+/* ===============================================================
+   MÉTRICAS
+   =============================================================== */
 
 void MainWindow::updateMetrics() {
 
@@ -172,37 +289,17 @@ void MainWindow::updateMetrics() {
     int percent = (goal > 0) ? (done * 100) / goal : 0;
     ui->progressBar_Throughput->setValue(percent);
 
-    // Actualización de uso del primer buffer (Buffer 0)
-    int buffer0_usage = controller->getBufferUsage(0);
+    int buffer0 = controller->getBufferUsage(0);
     ui->label_BufferUsage->setText(
-        QString("Buffer 0 (Ensamblaje): %1%").arg(buffer0_usage)
+        QString("Buffer 0 (Ensamblaje): %1%").arg(buffer0)
         );
 }
 
-
-void MainWindow::updateStationVisual(int stationId, const QString &status) {
-    // ... (El código de updateStationVisual es correcto y se mantiene igual) ...
-    QLabel *label = nullptr;
-
-    // Mapping de IDs (Asegúrate de que tus labels en el .ui coincidan con estos nombres)
-    if (stationId == 1) label = ui->label_Assembler;
-    else if (stationId == 2) label = ui->label_Tester;
-    else if (stationId == 3) label = ui->label_Packager; // Corregí el mapeo según tu setupProductionLine
-    else if (stationId == 4) label = ui->label_Labeler;   // Corregí el mapeo según tu setupProductionLine
-    else if (stationId == 5) label = ui->label_Storage;
-
-    if (!label) return;
-
-    if (status.contains("Procesando"))
-        label->setStyleSheet("background-color: yellow; font-weight: bold;");
-    else if (status.contains("Detenida"))
-        label->setStyleSheet("background-color: lightgray; font-weight: bold;");
-    else if (status.contains("Esperando"))
-        label->setStyleSheet("background-color: orange; font-weight: bold;");
-    else
-        label->setStyleSheet("background-color: lightgreen; font-weight: bold;");
-}
 void MainWindow::openHistoryWindow() {
     HistoryWindow* hw = new HistoryWindow(controller->getLogger(), this);
-    hw->exec();  // ventana modal
+    hw->exec();
+}
+
+void MainWindow::onProductionLineStatus(const QString &msg) {
+    ui->textEdit_Log->append(msg);
 }

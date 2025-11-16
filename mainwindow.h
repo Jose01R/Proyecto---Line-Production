@@ -7,6 +7,16 @@
 #include "logger.h" //Necesario para acceder a las señales del Logger
 #include "historywindow.h"
 
+// ===============================================
+// INCLUSIONES DE HILOS DE MANTENIMIENTO
+// ===============================================
+#include "generalthread.h"
+#include "generalcleanthreads.h"
+#include "generalstats.h"
+#include "generallogs.h"
+// Faltan GeneralLogs y GeneralStats (se incluirán luego)
+// ===============================================
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -36,6 +46,14 @@ private slots:
     // Métricas
     void updateMetrics();
 
+    // ===============================================
+    // SLOTS PARA HILOS DE MANTENIMIENTO
+    // ===============================================
+    void handleThreadMessage(const QString& name, const QString& action, const QString& message);
+    void handleSystemResetRequest();
+    void handleStatsData(const QString& statsJson); //
+    // ===============================================
+
 private:
     Ui::MainWindow *ui;
 
@@ -45,6 +63,16 @@ private:
     void openHistoryWindow();
     void setupConnections();
     void updateStationVisual(int stationId, const QString &status);
+
+    // ===============================================
+    // INSTANCIAS DE HILOS DE MANTENIMIENTO
+    // Usamos punteros para gestionarlos en el heap y detenerlos en el destructor.
+    // ===============================================
+    GeneralCleanThreads *cleanThread;
+    GeneralLogs *logsThread; // ¡NUEVO!
+    GeneralStats *statsThread; // ¡NUEVO!
+    // Agregaremos GeneralLogs y GeneralStats aquí en el futuro
+    // ===============================================
 };
 
 #endif // MAINWINDOW_H

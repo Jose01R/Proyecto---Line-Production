@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[18];
-    char stringdata0[281];
+    QByteArrayData data[24];
+    char stringdata0[364];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -49,7 +49,13 @@ QT_MOC_LITERAL(13, 218, 22), // "onProductionLineStatus"
 QT_MOC_LITERAL(14, 241, 3), // "msg"
 QT_MOC_LITERAL(15, 245, 13), // "onNewLogEntry"
 QT_MOC_LITERAL(16, 259, 7), // "message"
-QT_MOC_LITERAL(17, 267, 13) // "updateMetrics"
+QT_MOC_LITERAL(17, 267, 13), // "updateMetrics"
+QT_MOC_LITERAL(18, 281, 19), // "handleThreadMessage"
+QT_MOC_LITERAL(19, 301, 4), // "name"
+QT_MOC_LITERAL(20, 306, 6), // "action"
+QT_MOC_LITERAL(21, 313, 24), // "handleSystemResetRequest"
+QT_MOC_LITERAL(22, 338, 15), // "handleStatsData"
+QT_MOC_LITERAL(23, 354, 9) // "statsJson"
 
     },
     "MainWindow\0on_pushButton_Start_clicked\0"
@@ -59,7 +65,10 @@ QT_MOC_LITERAL(17, 267, 13) // "updateMetrics"
     "onStationStatusUpdate\0stationId\0status\0"
     "onProductFinishedProcessing\0Product\0"
     "product\0stationName\0onProductionLineStatus\0"
-    "msg\0onNewLogEntry\0message\0updateMetrics"
+    "msg\0onNewLogEntry\0message\0updateMetrics\0"
+    "handleThreadMessage\0name\0action\0"
+    "handleSystemResetRequest\0handleStatsData\0"
+    "statsJson"
 };
 #undef QT_MOC_LITERAL
 
@@ -69,7 +78,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -77,15 +86,18 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   59,    2, 0x08 /* Private */,
-       3,    0,   60,    2, 0x08 /* Private */,
-       4,    0,   61,    2, 0x08 /* Private */,
-       5,    0,   62,    2, 0x08 /* Private */,
-       6,    2,   63,    2, 0x08 /* Private */,
-       9,    2,   68,    2, 0x08 /* Private */,
-      13,    1,   73,    2, 0x08 /* Private */,
-      15,    1,   76,    2, 0x08 /* Private */,
-      17,    0,   79,    2, 0x08 /* Private */,
+       1,    0,   74,    2, 0x08 /* Private */,
+       3,    0,   75,    2, 0x08 /* Private */,
+       4,    0,   76,    2, 0x08 /* Private */,
+       5,    0,   77,    2, 0x08 /* Private */,
+       6,    2,   78,    2, 0x08 /* Private */,
+       9,    2,   83,    2, 0x08 /* Private */,
+      13,    1,   88,    2, 0x08 /* Private */,
+      15,    1,   91,    2, 0x08 /* Private */,
+      17,    0,   94,    2, 0x08 /* Private */,
+      18,    3,   95,    2, 0x08 /* Private */,
+      21,    0,  102,    2, 0x08 /* Private */,
+      22,    1,  103,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -97,6 +109,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void, QMetaType::QString,   14,
     QMetaType::Void, QMetaType::QString,   16,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString,   19,   20,   16,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   23,
 
        0        // eod
 };
@@ -116,6 +131,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 6: _t->onProductionLineStatus((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 7: _t->onNewLogEntry((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 8: _t->updateMetrics(); break;
+        case 9: _t->handleThreadMessage((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2])),(*reinterpret_cast< const QString(*)>(_a[3]))); break;
+        case 10: _t->handleSystemResetRequest(); break;
+        case 11: _t->handleStatsData((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -150,13 +168,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 9;
+        _id -= 12;
     }
     return _id;
 }

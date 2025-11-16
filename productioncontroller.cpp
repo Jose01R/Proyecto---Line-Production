@@ -73,11 +73,11 @@ void ProductionController::setupProductionLine(int numberOfStations) {
                 this, &ProductionController::updateStationStatus);
 
         if (station->getId() == NUM_STATIONS) {
-            // 👇 Solo Storage dispara onFinalProductFinished
+            // Solo Storage dispara onFinalProductFinished
             connect(station, &Station::productFinishedProcessing,
                     this, &ProductionController::onFinalProductFinished);
         } else {
-            // 👇 Solo estaciones 1–4 disparan productStateChanged directo
+            // Solo estaciones 1–4 disparan productStateChanged directo
             connect(station, &Station::productFinishedProcessing,
                     this, &ProductionController::productStateChanged);
         }
