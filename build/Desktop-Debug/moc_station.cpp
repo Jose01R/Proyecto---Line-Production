@@ -23,7 +23,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Station_t {
     QByteArrayData data[9];
-    char stringdata0[100];
+    char stringdata0[101];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,14 +38,14 @@ QT_MOC_LITERAL(2, 28, 0), // ""
 QT_MOC_LITERAL(3, 29, 9), // "stationId"
 QT_MOC_LITERAL(4, 39, 6), // "status"
 QT_MOC_LITERAL(5, 46, 25), // "productFinishedProcessing"
-QT_MOC_LITERAL(6, 72, 7), // "Product"
-QT_MOC_LITERAL(7, 80, 7), // "product"
-QT_MOC_LITERAL(8, 88, 11) // "stationName"
+QT_MOC_LITERAL(6, 72, 8), // "Product*"
+QT_MOC_LITERAL(7, 81, 7), // "product"
+QT_MOC_LITERAL(8, 89, 11) // "stationName"
 
     },
     "Station\0stationStatusUpdate\0\0stationId\0"
     "status\0productFinishedProcessing\0"
-    "Product\0product\0stationName"
+    "Product*\0product\0stationName"
 };
 #undef QT_MOC_LITERAL
 
@@ -80,7 +80,7 @@ void Station::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         (void)_t;
         switch (_id) {
         case 0: _t->stationStatusUpdate((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
-        case 1: _t->productFinishedProcessing((*reinterpret_cast< const Product(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
+        case 1: _t->productFinishedProcessing((*reinterpret_cast< Product*(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -93,7 +93,7 @@ void Station::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
             }
         }
         {
-            using _t = void (Station::*)(const Product & , const QString & );
+            using _t = void (Station::*)(Product * , const QString & );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&Station::productFinishedProcessing)) {
                 *result = 1;
                 return;
@@ -150,7 +150,7 @@ void Station::stationStatusUpdate(int _t1, const QString & _t2)
 }
 
 // SIGNAL 1
-void Station::productFinishedProcessing(const Product & _t1, const QString & _t2)
+void Station::productFinishedProcessing(Product * _t1, const QString & _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
