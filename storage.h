@@ -6,8 +6,17 @@
 class Storage : public Station {
     Q_OBJECT
 public:
-    Storage(int id, Buffer* input, Buffer* output=nullptr, QObject* parent = nullptr)
-        : Station(id, "Almacenamiento", "Guardar Producto", input, output, parent) {
+    Storage(int id,
+            Buffer* input,
+            ProductionController* controller,
+            QObject* parent = nullptr)
+        : Station(id,
+                  "Almacenamiento",
+                  "Almacenar",
+                  input,
+                  nullptr,   // última estación no tiene buffer de salida
+                  controller,
+                  parent) {
         qDebug() << "Estación de Almacenamiento (ID:" << id << ") creada.";
     }
 

@@ -1,15 +1,15 @@
 #include "station.h"
+#include "productioncontroller.h"
 
 Station::Station(int id, const QString& name, const QString& taskType,
-                 Buffer* input, Buffer* output, QObject* parent)
+                 Buffer* input, Buffer* output,
+                 ProductionController* controller,     // <--- NUEVO
+                 QObject* parent)
     : QThread(parent),
-    id(id),
-    name(name),
-    taskType(taskType),
-    inputBuffer(input),
-    outputBuffer(output),
-    running(false),
-    lastStatus("")
+    id(id), name(name), taskType(taskType),
+    inputBuffer(input), outputBuffer(output),
+    running(false), lastStatus(""),
+    controller(controller)              // <--- NUEVO
 {
     qDebug() << "Estación" << name << "(ID:" << id << ") creada.";
 }
@@ -17,7 +17,7 @@ Station::Station(int id, const QString& name, const QString& taskType,
 Station::~Station() {
     // Intentamos parar y esperar brevemente para que el hilo termine.
     stopStation();
-    if (isRunning()) {
+    if (!isRunning()) {
         // espera hasta 2s; si no termina, avisamos (evitar terminate salvo como último recurso)
         if (!wait(2000)) {
             qWarning() << "Station" << name << "no terminó en 2s al destruir. Podría causar crash.";
@@ -82,6 +82,19 @@ void Station::run() {
 
         // La estación queda esperando siguiente producto
         sendStatus("Esperando");
+
+        while (controller->getPaused()) {
+
+            sendStatus("Pausada");
+
+            msleep(100);
+
+            if (!running)
+                return;
+        }
+
+
+
     }
 
     // Al salir del while, estación detenida

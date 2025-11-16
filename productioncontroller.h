@@ -34,7 +34,7 @@ private:
     ApplianceGenerator generator;
 
     int productIdCounter;
-
+    bool isPaused = false;
 public:
     explicit ProductionController(QObject* parent = nullptr);
     ~ProductionController() override;
@@ -53,6 +53,7 @@ public:
     int getActiveThreadCount() const;
     int getBufferUsage(int index) const;
 
+    bool getPaused() const { return isPaused; }
 public slots:
     void startProduction();
     void stopProduction();
@@ -63,6 +64,9 @@ public slots:
     // Slot para estaciones intermedias: solo re-emite estado a la GUI sin borrar
     void onIntermediateProductFinished(Product* product, const QString& stationName);
 
+
+    void pauseProduction();
+    void resumeProduction();
 signals:
     void newProductCreated(const Product& product);
     void productionLineStatus(const QString& status);

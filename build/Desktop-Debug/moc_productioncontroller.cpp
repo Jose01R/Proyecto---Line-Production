@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_ProductionController_t {
-    QByteArrayData data[17];
-    char stringdata0[255];
+    QByteArrayData data[19];
+    char stringdata0[288];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -48,7 +48,9 @@ QT_MOC_LITERAL(12, 162, 14), // "stopProduction"
 QT_MOC_LITERAL(13, 177, 15), // "generateProduct"
 QT_MOC_LITERAL(14, 193, 22), // "onFinalProductFinished"
 QT_MOC_LITERAL(15, 216, 8), // "Product*"
-QT_MOC_LITERAL(16, 225, 29) // "onIntermediateProductFinished"
+QT_MOC_LITERAL(16, 225, 29), // "onIntermediateProductFinished"
+QT_MOC_LITERAL(17, 255, 15), // "pauseProduction"
+QT_MOC_LITERAL(18, 271, 16) // "resumeProduction"
 
     },
     "ProductionController\0newProductCreated\0"
@@ -57,7 +59,8 @@ QT_MOC_LITERAL(16, 225, 29) // "onIntermediateProductFinished"
     "productStateChanged\0stationName\0"
     "startProduction\0stopProduction\0"
     "generateProduct\0onFinalProductFinished\0"
-    "Product*\0onIntermediateProductFinished"
+    "Product*\0onIntermediateProductFinished\0"
+    "pauseProduction\0resumeProduction"
 };
 #undef QT_MOC_LITERAL
 
@@ -67,7 +70,7 @@ static const uint qt_meta_data_ProductionController[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -75,17 +78,19 @@ static const uint qt_meta_data_ProductionController[] = {
        4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   59,    2, 0x06 /* Public */,
-       5,    1,   62,    2, 0x06 /* Public */,
-       7,    2,   65,    2, 0x06 /* Public */,
-       9,    2,   70,    2, 0x06 /* Public */,
+       1,    1,   69,    2, 0x06 /* Public */,
+       5,    1,   72,    2, 0x06 /* Public */,
+       7,    2,   75,    2, 0x06 /* Public */,
+       9,    2,   80,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      11,    0,   75,    2, 0x0a /* Public */,
-      12,    0,   76,    2, 0x0a /* Public */,
-      13,    0,   77,    2, 0x0a /* Public */,
-      14,    2,   78,    2, 0x0a /* Public */,
-      16,    2,   83,    2, 0x0a /* Public */,
+      11,    0,   85,    2, 0x0a /* Public */,
+      12,    0,   86,    2, 0x0a /* Public */,
+      13,    0,   87,    2, 0x0a /* Public */,
+      14,    2,   88,    2, 0x0a /* Public */,
+      16,    2,   93,    2, 0x0a /* Public */,
+      17,    0,   98,    2, 0x0a /* Public */,
+      18,    0,   99,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -99,6 +104,8 @@ static const uint qt_meta_data_ProductionController[] = {
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 15, QMetaType::QString,    4,   10,
     QMetaType::Void, 0x80000000 | 15, QMetaType::QString,    4,   10,
+    QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -118,6 +125,8 @@ void ProductionController::qt_static_metacall(QObject *_o, QMetaObject::Call _c,
         case 6: _t->generateProduct(); break;
         case 7: _t->onFinalProductFinished((*reinterpret_cast< Product*(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
         case 8: _t->onIntermediateProductFinished((*reinterpret_cast< Product*(*)>(_a[1])),(*reinterpret_cast< const QString(*)>(_a[2]))); break;
+        case 9: _t->pauseProduction(); break;
+        case 10: _t->resumeProduction(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -182,13 +191,13 @@ int ProductionController::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 9;
+        _id -= 11;
     }
     return _id;
 }

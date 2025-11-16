@@ -173,11 +173,28 @@ void MainWindow::on_pushButton_Stop_clicked() {
 
 void MainWindow::on_pushButton_Pause_clicked() {
 
-    controller->stopProduction();
-    ui->label_Status->setText("Producción pausada");
-    ui->label_Status->setStyleSheet("color: orange; font-weight:bold;");
+    // NO estaba pausado → Pausar
+    if (!controller->getPaused()) {
 
-    ui->textEdit_Log->append(">>> Simulación pausada <<<");
+        controller->pauseProduction();
+
+        ui->label_Status->setText("Producción pausada");
+        ui->label_Status->setStyleSheet("color: orange; font-weight:bold;");
+        ui->pushButton_Pause->setText("▶ Reanudar");
+
+        ui->textEdit_Log->append(">>> Producción pausada <<<");
+
+        return;
+    }
+
+    // SÍ estaba pausado → Reanudar
+    controller->resumeProduction();
+
+    ui->label_Status->setText("Producción en marcha");
+    ui->label_Status->setStyleSheet("color: green; font-weight:bold;");
+    ui->pushButton_Pause->setText("⏸ Pausar");
+
+    ui->textEdit_Log->append(">>> Producción reanudada <<<");
 }
 
 void MainWindow::on_pushButton_Reset_clicked() {
@@ -226,13 +243,20 @@ void MainWindow::updateStationVisual(int stationId, const QString &status) {
 
     if (status.contains("Procesando"))
         label->setStyleSheet("background-color: yellow; font-weight:bold;");
-    else if (status.contains("Detenida"))
-        label->setStyleSheet("background-color: lightgray; font-weight:bold;");
+
     else if (status.contains("Esperando"))
         label->setStyleSheet("background-color: orange; font-weight:bold;");
+
+    else if (status.contains("Pausada"))
+        label->setStyleSheet("background-color: lightblue; font-weight:bold;");
+
+    else if (status.contains("Detenida"))
+        label->setStyleSheet("background-color: lightgray; font-weight:bold;");
+
     else
         label->setStyleSheet("background-color: lightgreen; font-weight:bold;");
 }
+
 
 /* ===============================================================
    FINALIZACIÓN DE PRODUCTO

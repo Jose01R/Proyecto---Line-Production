@@ -6,8 +6,10 @@
 class Labeler : public Station {
     Q_OBJECT
 public:
-    Labeler(int id, Buffer* input, Buffer* output, QObject* parent = nullptr)
-        : Station(id, "Etiquetado", "Etiquetar", input, output, parent) {
+    Labeler(int id, Buffer* in, Buffer* out,
+            ProductionController* controller, QObject* parent=nullptr)
+        : Station(id, "Etiquetado", "Etiquetar",
+                  in, out, controller, parent) {
         qDebug() << "Estación de Etiquetado (ID:" << id << ") creada.";
     }
 

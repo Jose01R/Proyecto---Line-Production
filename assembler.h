@@ -11,8 +11,18 @@ class Assembler : public Station {
 
 public:
     // Constructor que llama al constructor de clase Station
-    Assembler(int id, Buffer* input, Buffer* output, QObject* parent = nullptr)
-        : Station(id, "Ensamblaje", "Ensamblar Pieza", input, output, parent) {
+    Assembler(int id,
+              Buffer* input,
+              Buffer* output,
+              ProductionController* controller,
+              QObject* parent = nullptr)
+        : Station(id,
+                  "Ensamblaje",
+                  "Ensamblar Pieza",
+                  input,
+                  output,
+                  controller,   // ← ESTE parámetro es el que te faltaba
+                  parent) {
         qDebug() << "Estación de Ensamblaje (ID:" << id << ") creada.";
     }
 

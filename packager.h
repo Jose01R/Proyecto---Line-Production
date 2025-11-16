@@ -6,8 +6,19 @@
 class Packager : public Station {
     Q_OBJECT
 public:
-    Packager(int id, Buffer* input, Buffer* output, QObject* parent = nullptr)
-        : Station(id, "Empaquetado", "Empaquetar", input, output, parent) {
+    Packager(int id,
+             Buffer* in,
+             Buffer* out,
+             ProductionController* controller,
+             QObject* parent = nullptr)
+        : Station(id,
+                  "Empaquetado",
+                  "Empaquetar",
+                  in,
+                  out,
+                  controller,
+                  parent)
+    {
         qDebug() << "Estación de Empaquetado (ID:" << id << ") creada.";
     }
 

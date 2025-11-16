@@ -12,8 +12,10 @@ class Tester : public Station {
 
 public:
     // Constructor que llama al constructor de la clase base Station
-    Tester(int id, Buffer* input, Buffer* output, QObject* parent = nullptr)
-        : Station(id, "Inspección de Calidad", "Inspeccionar", input, output, parent) {
+    Tester(int id, Buffer* in, Buffer* out,
+           ProductionController* controller, QObject* parent=nullptr)
+        : Station(id, "Inspección de Calidad", "Inspeccionar",
+                  in, out, controller, parent) {
         qDebug() << "Estación de Inspección (ID:" << id << ") creada.";
     }
 

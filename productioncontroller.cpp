@@ -60,12 +60,13 @@ void ProductionController::setupProductionLine(int numberOfStations) {
     for (int i = 0; i < NUM_STATIONS; ++i) {
         bufferList.append(new Buffer());
     }
+    Assembler* s1 = new Assembler(1, bufferList[0], bufferList[1], this, this);
+    Tester*    s2 = new Tester(2, bufferList[1], bufferList[2], this, this);
+    Labeler*   s3 = new Labeler(3, bufferList[2], bufferList[3], this, this);
+    Packager*  s4 = new Packager(4, bufferList[3], bufferList[4], this, this);
+    Storage*   s5 = new Storage(5, bufferList[4], this, this);
 
-    Assembler* s1 = new Assembler(1, bufferList[0], bufferList[1], this);
-    Tester*    s2 = new Tester(2, bufferList[1], bufferList[2], this);
-    Labeler*   s3 = new Labeler(3, bufferList[2], bufferList[3], this);
-    Packager*  s4 = new Packager(4, bufferList[3], bufferList[4], this);
-    Storage*   s5 = new Storage(5, bufferList[4], nullptr, this);
+
 
     stationList.append({s1, s2, s3, s4, s5});
 
@@ -205,3 +206,13 @@ int ProductionController::getBufferUsage(int index) const {
     int capacity = b->getCapacity();
     return (capacity > 0) ? (b->size() * 100) / capacity : 0;
 }
+void ProductionController::pauseProduction() {
+    isPaused = true;
+    emit productionLineStatus("Producción pausada.");
+}
+
+void ProductionController::resumeProduction() {
+    isPaused = false;
+    emit productionLineStatus("Producción reanudada.");
+}
+
