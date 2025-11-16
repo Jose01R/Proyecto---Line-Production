@@ -2,33 +2,29 @@
 #define GENERALCLEANTHREADS_H
 
 #include "generalthread.h"
-#include <QTimer> // Usaremos QTimer para un ciclo de limpieza periódico
-#include <QCoreApplication> // Para acceder a la lista de objetos
+#include "productioncontroller.h"
+#include <QTimer>
+#include <QCoreApplication>
 
-/**
- * @brief Hilo de mantenimiento para limpieza general y reseteo.
- * Lanza periódicamente una acción de 'limpieza' general de recursos.
- */
 class GeneralCleanThreads : public GeneralThread {
     Q_OBJECT
 
+private:
+    const ProductionController* controller;
+
 public:
-    // Constructor
-    GeneralCleanThreads(QObject* parent = nullptr)
-        : GeneralThread("GeneralCleanThreads", parent) {}
+    // Constructor corregido con referencia al controller
+    GeneralCleanThreads(const ProductionController* controller,
+                        QObject* parent = nullptr)
+        : GeneralThread("GeneralCleanThreads", parent),
+        controller(controller) {}
 
 protected:
-    // Implementación del ciclo de vida del hilo
     void run() override;
 
-private:
-    // Aquí podrías tener una referencia o señal a la clase que gestiona
-    // todos los hilos y recursos para hacer la limpieza real.
-    // Por ahora, solo simulará y emitirá mensajes.
-
 signals:
-    // Señal específica para indicar a la aplicación que debe resetear sus recursos
     void requestSystemReset();
 };
 
 #endif // GENERALCLEANTHREADS_H
+

@@ -12,12 +12,11 @@ MainWindow::MainWindow(QWidget *parent)
     , productsProcessed(0)
 
     // ===============================
-    // HILOS DE MANTENIMIENTO
+    // HILOS DE MANTENIMIENTO (CORREGIDO)
     // ===============================
-    , cleanThread(new GeneralCleanThreads(this))
+    , cleanThread(new GeneralCleanThreads(controller, this))   // ✔ CAMBIO AQUÍ
     , logsThread(new GeneralLogs(controller, this))
     , statsThread(new GeneralStats(controller, this))
-
 {
     ui->setupUi(this);
     statsWindow = new StatsWindow(this);
@@ -26,12 +25,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->textEdit_Log->setReadOnly(true);
     ui->tableWidget_Threads->setRowCount(5);
 
-    // Crear línea con 5 estaciones
     controller->setupProductionLine(5);
 
     setupConnections();
 
-    connect(metricsTimer, &QTimer::timeout, this, &MainWindow::updateMetrics);
+    connect(metricsTimer, &QTimer::timeout,
+            this, &MainWindow::updateMetrics);
 
     // ===============================
     // INICIO DE HILOS
@@ -75,7 +74,6 @@ void MainWindow::setupConnections() {
     // ======================================
     // HILOS DE MANTENIMIENTO
     // ======================================
-
     connect(cleanThread, &GeneralThread::threadMessage,
             this, &MainWindow::handleThreadMessage);
 
@@ -95,7 +93,6 @@ void MainWindow::setupConnections() {
         statsWindow->show();
         statsWindow->raise();
     });
-
 }
 
 /* ===============================================================
@@ -136,7 +133,6 @@ void MainWindow::handleStatsData(const QString& statsJson) {
         "<span style='color:#4CAF50;'>📊 Estadísticas actualizadas (ver ventana de estadísticas)</span>"
         );
 }
-
 
 /* ===============================================================
    BOTONES PRINCIPALES
@@ -255,8 +251,7 @@ void MainWindow::onProductFinishedProcessing(const Product &product,
             );
 
         ui->progressBar_Throughput->setValue(
-            goal > 0 ? (done * 100) / goal : 0
-            );
+            goal > 0 ? (done * 100) / goal : 0);
     }
 
     ui->textEdit_Log->append(
@@ -304,6 +299,10 @@ void MainWindow::updateMetrics() {
         QString("Buffer 0 (Ensamblaje): %1%").arg(buffer0)
         );
 }
+
+/* ===============================================================
+   HISTORIAL
+   =============================================================== */
 
 void MainWindow::openHistoryWindow() {
     HistoryWindow* hw = new HistoryWindow(controller->getLogger(), this);
