@@ -25,11 +25,10 @@ private:
     QList<Buffer*> bufferList;
     QTimer* productGenerationTimer;
 
-    // Ajustado el orden para coincidir con la lista de inicialización del constructor (para -Wreorder)
     int totalGoal;
     int completedCount;
 
-    // El logger y el generator deben ir después si se inicializan con miembros previos
+
     Logger *logger;
     ApplianceGenerator generator;
 
@@ -45,7 +44,7 @@ public:
     int getTotalGoal() const { return totalGoal; }
     int getCompletedCount() const { return completedCount; }
 
-    // NUEVO GETTER: Permite a MainWindow acceder a la lista para el log visual.
+
     const QList<Station*>& getStationList() const { return stationList; }
 
     Logger* getLogger() const { return logger; }

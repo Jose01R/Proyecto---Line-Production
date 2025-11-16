@@ -21,13 +21,13 @@ void GeneralCleanThreads::run() {
             if (!isRunning) break;
         }
 
-        // ⛔ NUEVO: No hacer limpieza si la producción está activa
+        //No hacer limpieza si la producción está activa
         if (controller && controller->getActiveThreadCount() > 0) {
             emitMessage("INFO", "Limpieza omitida (producción activa).");
             continue;
         }
 
-        // --- LIMPIEZA REAL ---
+
         emitMessage("ADVERTENCIA", "Realizando reseteo y reactivación de recursos (Simulado).");
 
         emit requestSystemReset();

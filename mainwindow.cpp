@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent)
     , metricsTimer(new QTimer(this))
     , productsProcessed(0)
 
-    // ===============================
-    // HILOS DE MANTENIMIENTO (CORREGIDO)
-    // ===============================
-    , cleanThread(new GeneralCleanThreads(controller, this))   // ✔ CAMBIO AQUÍ
+    //
+    // HILOS DE MANTENIMIENTO
+    //
+    , cleanThread(new GeneralCleanThreads(controller, this))
     , logsThread(new GeneralLogs(controller, this))
     , statsThread(new GeneralStats(controller, this))
 {
@@ -32,9 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(metricsTimer, &QTimer::timeout,
             this, &MainWindow::updateMetrics);
 
-    // ===============================
+    //
     // INICIO DE HILOS
-    // ===============================
+    //
     cleanThread->start();
     logsThread->start();
     statsThread->start();
@@ -95,9 +95,7 @@ void MainWindow::setupConnections() {
     });
 }
 
-/* ===============================================================
-   MENSAJES DE LOS HILOS
-   =============================================================== */
+//mensajje de los hilos
 void MainWindow::handleThreadMessage(const QString& name,
                                      const QString& action,
                                      const QString& message)
@@ -134,9 +132,8 @@ void MainWindow::handleStatsData(const QString& statsJson) {
         );
 }
 
-/* ===============================================================
-   BOTONES PRINCIPALES
-   =============================================================== */
+
+//botones  princiipales
 
 void MainWindow::on_pushButton_Start_clicked() {
 
@@ -173,7 +170,7 @@ void MainWindow::on_pushButton_Stop_clicked() {
 
 void MainWindow::on_pushButton_Pause_clicked() {
 
-    // NO estaba pausado → Pausar
+    // NO estaba pausado entonces Pausar
     if (!controller->getPaused()) {
 
         controller->pauseProduction();
@@ -187,7 +184,7 @@ void MainWindow::on_pushButton_Pause_clicked() {
         return;
     }
 
-    // SÍ estaba pausado → Reanudar
+    // SÍ estaba pausado entonces  Reanudar
     controller->resumeProduction();
 
     ui->label_Status->setText("Producción en marcha");
@@ -211,9 +208,7 @@ void MainWindow::on_pushButton_Reset_clicked() {
     controller->setupProductionLine(5);
 }
 
-/* ===============================================================
-   ACTUALIZACIÓN DE ESTACIONES
-   =============================================================== */
+//actualizacion de estaciones
 
 void MainWindow::onStationStatusUpdate(int stationId, const QString &status) {
 
@@ -258,10 +253,8 @@ void MainWindow::updateStationVisual(int stationId, const QString &status) {
 }
 
 
-/* ===============================================================
-   FINALIZACIÓN DE PRODUCTO
-   =============================================================== */
 
+//finalizacion del prooducto
 void MainWindow::onProductFinishedProcessing(const Product &product,
                                              const QString &stationName)
 {
@@ -286,10 +279,7 @@ void MainWindow::onProductFinishedProcessing(const Product &product,
         );
 }
 
-/* ===============================================================
-   LOG JSON
-   =============================================================== */
-
+//log json
 void MainWindow::onNewLogEntry(const QString& message) {
 
     ui->textEdit_Log->append(
@@ -297,10 +287,7 @@ void MainWindow::onNewLogEntry(const QString& message) {
         );
 }
 
-/* ===============================================================
-   MÉTRICAS
-   =============================================================== */
-
+//metricas
 void MainWindow::updateMetrics() {
 
     int active = controller->getActiveThreadCount();
@@ -324,10 +311,8 @@ void MainWindow::updateMetrics() {
         );
 }
 
-/* ===============================================================
-   HISTORIAL
-   =============================================================== */
 
+//historial
 void MainWindow::openHistoryWindow() {
     HistoryWindow* hw = new HistoryWindow(controller->getLogger(), this);
     hw->exec();

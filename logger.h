@@ -36,7 +36,7 @@ private:
     // dailyTypeCount["2025-11-15"]["Lavadora"] = 5
     QMap<QString, QMap<QString,int>> dailyTypeCount;
 
-    // Fecha actual en memoria (para conveniencia)
+    // Fecha actual en memoria
     QString todayString() const { return QDate::currentDate().toString(Qt::ISODate); }
 
 public:

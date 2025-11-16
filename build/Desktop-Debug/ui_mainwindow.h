@@ -244,7 +244,7 @@ public:
         pushButton_Pause->setText(QCoreApplication::translate("MainWindow", "\342\217\270 Pausar", nullptr));
         pushButton_Stop->setText(QCoreApplication::translate("MainWindow", "\342\217\271 Detener", nullptr));
         pushButton_History->setText(QCoreApplication::translate("MainWindow", "\360\237\223\204 Historial", nullptr));
-        pushButton_Stats->setText(QCoreApplication::translate("MainWindow", "\360\237\223\212 Estad\303\255sticas", nullptr));
+        pushButton_Stats->setText(QCoreApplication::translate("MainWindow", "\360\237\223\212 Grafico", nullptr));
         label_Status->setText(QCoreApplication::translate("MainWindow", "Estado: Sistema detenido", nullptr));
         groupBox_Linea->setTitle(QCoreApplication::translate("MainWindow", "L\303\255nea de Producci\303\263n", nullptr));
         label_Assembler->setText(QCoreApplication::translate("MainWindow", "\360\237\224\247 Ensamblaje", nullptr));

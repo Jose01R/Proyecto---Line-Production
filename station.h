@@ -25,14 +25,14 @@ protected:
     volatile bool running;
     QString lastStatus;
 
-    ProductionController* controller;   // <--- NECESARIO PARA PAUSA/REANUDAR
+    ProductionController* controller;   // NECESARIO PARA PAUSA/REANUDAR
 
 public:
     Station(int id,
             const QString& name,
             const QString& taskType,
             Buffer* input, Buffer* output,
-            ProductionController* controller,   // <--- AGREGADO
+            ProductionController* controller,
             QObject* parent = nullptr);
 
     ~Station() override;

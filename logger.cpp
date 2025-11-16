@@ -157,9 +157,6 @@ void Logger::loadLogFromJson() {
             dailyTypeCount[dateKey] = typeMap;
         }
     }
-
-    // Nota: ya cargamos lo que había en disco. Si hay registros para el día de hoy,
-    // se seguirán acumulando porque recordCompletion usa QDate::currentDate().
 }
 
 /* Accessors para UI */

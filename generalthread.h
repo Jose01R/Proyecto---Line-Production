@@ -17,7 +17,7 @@ protected:
     // Propiedades comunes
     QString threadName;
     bool isRunning;
-    QMutex mutex; // Para asegurar acceso a propiedades compartidas (como isRunning)
+    QMutex mutex; // Para asegurar acceso a propiedades compartidas
 
 public:
     // Constructor
@@ -39,11 +39,6 @@ public:
 
     // Getter para el nombre
     QString getName() const { return threadName; }
-
-    // El método run() será implementado por las clases derivadas.
-    // virtual void run() override = 0; // Se define como 0 si es puramente abstracta,
-    // pero la dejamos sin implementar para evitar
-    // problemas si la clase base necesita alguna lógica.
 
 signals:
     // Señal para lanzar mensajes a la interfaz gráfica (bitácora, advertencias, etc.)

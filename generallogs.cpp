@@ -11,7 +11,7 @@ QString GeneralLogs::collectLogInformation() const {
         return "ERROR: Controller no disponible.";
     }
 
-    // --- 1. Estado de los Hilos de Producción (Estaciones) ---
+    // 1. Estado de los Hilos de Producción (Estaciones)
     QString log;
     log += "=================================================\n";
     log += "BITACORA DE ESTADO (Production Line)\n";
@@ -29,7 +29,7 @@ QString GeneralLogs::collectLogInformation() const {
         log += info;
     }
 
-    // --- 2. Estado de Recursos (Buffers) ---
+    //  Estado de Recursos (Buffers)
     log += "-------------------------------------------------\n";
     log += "ESTADO DE RECURSOS (Buffers)\n";
     log += QString("Buffer 0 (Ensamblaje): %1% de uso\n").arg(controller->getBufferUsage(0));
@@ -53,7 +53,7 @@ void GeneralLogs::run() {
             if (!isRunning) break;
         }
 
-        // --- SIMULACIÓN DE ACCIÓN DE LOGGING ---
+        //SIMULACIÓN DE ACCIÓN DE LOGGING
         // 1. Espera de 5 segundos
         msleep(5000);
 

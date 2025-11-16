@@ -3,13 +3,13 @@
 
 Station::Station(int id, const QString& name, const QString& taskType,
                  Buffer* input, Buffer* output,
-                 ProductionController* controller,     // <--- NUEVO
+                 ProductionController* controller,
                  QObject* parent)
     : QThread(parent),
     id(id), name(name), taskType(taskType),
     inputBuffer(input), outputBuffer(output),
     running(false), lastStatus(""),
-    controller(controller)              // <--- NUEVO
+    controller(controller)
 {
     qDebug() << "Estación" << name << "(ID:" << id << ") creada.";
 }
@@ -67,7 +67,7 @@ void Station::run() {
             continue;
         }
 
-        // ======== PROCESAR PRODUCTO ========
+        //  PROCESAR PRODUCTO
         sendStatus("Procesando Producto " + QString::number(product->getId()));
 
         processProduct(*product);  // Lógica específica (Assembler/Tester/etc)
@@ -111,8 +111,7 @@ void Station::stopStation() {
 
      requestInterruption();
 
-    // NO llamamos wait() aquí para no congelar la GUI
-    // Qt se encarga de limpiar el hilo al destruir el objeto si ya terminó
+
 }
 
 

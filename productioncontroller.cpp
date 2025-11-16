@@ -180,7 +180,7 @@ void ProductionController::onFinalProductFinished(Product* product, const QStrin
 
     qDebug() << "Producto finalizado:" << completedCount << "/" << totalGoal;
 
-    // Ahora BORRAMOS el producto (porque es el final)
+    // Ahora borra el producto
     delete product;
 
     if (completedCount >= totalGoal) {

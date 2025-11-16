@@ -21,7 +21,7 @@ public:
                   "Ensamblar Pieza",
                   input,
                   output,
-                  controller,   // ← ESTE parámetro es el que te faltaba
+                  controller,
                   parent) {
         qDebug() << "Estación de Ensamblaje (ID:" << id << ") creada.";
     }

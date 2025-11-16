@@ -67,7 +67,7 @@
        <item>
            <widget class="QPushButton" name="pushButton_Stats">
                <property name="text">
-                   <string>📊 Estadísticas</string>
+                   <string>📊 Grafico</string>
                </property>
                <property name="styleSheet">
                    <string notr="true">font-weight: bold;</string>

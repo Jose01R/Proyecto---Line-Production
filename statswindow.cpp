@@ -28,9 +28,9 @@ void StatsWindow::updateChart(const QString& json)
 
     // Buffers (ahora 0,1,2,3,4)
     int buf0 = obj.value("buffer_0_usage").toInt();
-    int buf1 = obj.value("buffer_1_usage").toInt();   // NUEVO
+    int buf1 = obj.value("buffer_1_usage").toInt();
     int buf2 = obj.value("buffer_2_usage").toInt();
-    int buf3 = obj.value("buffer_3_usage").toInt();   // NUEVO
+    int buf3 = obj.value("buffer_3_usage").toInt();
     int buf4 = obj.value("buffer_4_usage").toInt();
 
     // Set de barras
@@ -39,9 +39,9 @@ void StatsWindow::updateChart(const QString& json)
          << goal
          << threads
          << buf0
-         << buf1   // NUEVO
+         << buf1
          << buf2
-         << buf3   // NUEVO
+         << buf3
          << buf4;
 
     QBarSeries* series = new QBarSeries();
@@ -53,9 +53,9 @@ void StatsWindow::updateChart(const QString& json)
         "Meta",
         "Hilos",
         "Buffer0",
-        "Buffer1",  // NUEVO
+        "Buffer1",
         "Buffer2",
-        "Buffer3",  // NUEVO
+        "Buffer3",
         "Buffer4"
     };
 

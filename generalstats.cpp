@@ -23,13 +23,12 @@ QString GeneralStats::collectStatsData() const {
 
     // Métricas de Recursos
     stats["buffer_0_usage"] = controller->getBufferUsage(0);
-    stats["buffer_1_usage"] = controller->getBufferUsage(1);  // NUEVO
+    stats["buffer_1_usage"] = controller->getBufferUsage(1);
     stats["buffer_2_usage"] = controller->getBufferUsage(2);
-    stats["buffer_3_usage"] = controller->getBufferUsage(3);  // NUEVO
+    stats["buffer_3_usage"] = controller->getBufferUsage(3);
     stats["buffer_4_usage"] = controller->getBufferUsage(4);
 
     // Persistencia (Asumimos que Logger tiene un método para contar logs)
-    // stats["logs_recorded"] = controller->getLogger()->getRecordCount(); // Si existe el método
 
     QJsonDocument doc(stats);
     return doc.toJson(QJsonDocument::Compact);
