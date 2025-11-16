@@ -22,9 +22,10 @@ QString GeneralStats::collectStatsData() const {
     stats["active_threads"] = controller->getActiveThreadCount();
 
     // Métricas de Recursos
-    // Asumimos que los buffers tienen índices 0 a 4
     stats["buffer_0_usage"] = controller->getBufferUsage(0);
+    stats["buffer_1_usage"] = controller->getBufferUsage(1);  // NUEVO
     stats["buffer_2_usage"] = controller->getBufferUsage(2);
+    stats["buffer_3_usage"] = controller->getBufferUsage(3);  // NUEVO
     stats["buffer_4_usage"] = controller->getBufferUsage(4);
 
     // Persistencia (Asumimos que Logger tiene un método para contar logs)
