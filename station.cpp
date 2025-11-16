@@ -15,8 +15,17 @@ Station::Station(int id, const QString& name, const QString& taskType,
 }
 
 Station::~Station() {
+    // Intentamos parar y esperar brevemente para que el hilo termine.
+    stopStation();
+    if (isRunning()) {
+        // espera hasta 2s; si no termina, avisamos (evitar terminate salvo como último recurso)
+        if (!wait(2000)) {
+            qWarning() << "Station" << name << "no terminó en 2s al destruir. Podría causar crash.";
+        }
+    }
     qDebug() << "Estación" << name << "(ID:" << id << ") destruida.";
 }
+
 
 void Station::run() {
 
@@ -69,7 +78,7 @@ void Station::run() {
         }
 
         // Notificar que este producto terminó en esta estación
-        emit productFinishedProcessing(*product, name);
+        emit productFinishedProcessing(product, name);
 
         // La estación queda esperando siguiente producto
         sendStatus("Esperando");
@@ -86,6 +95,8 @@ void Station::stopStation() {
     if (inputBuffer) {
         inputBuffer->forceWake();
     }
+
+     requestInterruption();
 
     // NO llamamos wait() aquí para no congelar la GUI
     // Qt se encarga de limpiar el hilo al destruir el objeto si ya terminó

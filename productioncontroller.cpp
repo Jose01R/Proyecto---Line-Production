@@ -15,6 +15,7 @@ ProductionController::ProductionController(QObject* parent)
     completedCount(0),
     logger(new Logger(this)) // Inicializa el Logger (importante)
 {
+    qRegisterMetaType<Product*>("Product*"); // <- IMPORTANTE (para queued signals)
     productGenerationTimer = new QTimer(this);
     connect(productGenerationTimer, &QTimer::timeout, this, &ProductionController::generateProduct);
 
@@ -73,15 +74,16 @@ void ProductionController::setupProductionLine(int numberOfStations) {
                 this, &ProductionController::updateStationStatus);
 
         if (station->getId() == NUM_STATIONS) {
-            // Solo Storage dispara onFinalProductFinished
+            // Solo Storage dispara final -> manejador que BORRA el Product*
             connect(station, &Station::productFinishedProcessing,
                     this, &ProductionController::onFinalProductFinished);
         } else {
-            // Solo estaciones 1–4 disparan productStateChanged directo
+            // Estaciones 1–4 -> manejador intermedio que solo notifica GUI
             connect(station, &Station::productFinishedProcessing,
-                    this, &ProductionController::productStateChanged);
+                    this, &ProductionController::onIntermediateProductFinished);
         }
     }
+
 
     emit productionLineStatus("Línea configurada con 5 estaciones y 5 buffers.");
 }
@@ -109,13 +111,26 @@ void ProductionController::stopProduction() {
 
     // Despertar buffers para que los hilos salgan del bloqueo
     for (Buffer* buffer : bufferList) {
-        buffer->forceWake();   // lo implementamos abajo
+        buffer->forceWake();
     }
 
+    // Pedimos a las estaciones que paren
     for (Station* station : stationList) {
         station->stopStation();
     }
+
+    // Esperamos a que terminen (timeout razonable)
+    for (Station* station : stationList) {
+        if (station->isRunning()) {
+            if (!station->wait(2000)) { // 2s
+                qWarning() << "Station" << station->getName() << "no terminó en 2s tras stopProduction().";
+                // Como último recurso no llamamos terminate() automáticamente,
+                // podrías considerar station->terminate() si es imprescindible (no recomendado).
+            }
+        }
+    }
 }
+
 
 
 void ProductionController::generateProduct() {
@@ -144,23 +159,35 @@ void ProductionController::generateProduct() {
     emit newProductCreated(*newProduct);
 }
 
-void ProductionController::onFinalProductFinished(const Product& product, const QString& stationName) {
+void ProductionController::onIntermediateProductFinished(Product* product, const QString& stationName) {
+    if (!product) return;
+    // Re-emito la señal que ya tenías para la GUI pero con referencia (no borrar)
+    emit productStateChanged(*product, stationName);
+    // NO borrar el product: la estación anterior o el buffer lo seguirá gestionando.
+}
+
+void ProductionController::onFinalProductFinished(Product* product, const QString& stationName) {
+    if (!product) return;
 
     completedCount++;
 
-    // Registrar en el Logger
-    logger->recordCompletion(product);
+    // Registrar en el Logger (Logger usa copia de datos)
+    logger->recordCompletion(*product);
 
-    //Notificar a la GUI
-    emit productStateChanged(product, stationName);
+    //Notificar a la GUI (usando referencia temporal)
+    emit productStateChanged(*product, stationName);
 
     qDebug() << "Producto finalizado:" << completedCount << "/" << totalGoal;
+
+    // Ahora BORRAMOS el producto (porque es el final)
+    delete product;
 
     if (completedCount >= totalGoal) {
         stopProduction();
         emit productionLineStatus("Meta alcanzada. Deteniendo producción.");
     }
 }
+
 
 int ProductionController::getActiveThreadCount() const {
     int active = 0;
