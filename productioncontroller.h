@@ -57,7 +57,11 @@ public slots:
     void startProduction();
     void stopProduction();
     void generateProduct();
-    void onFinalProductFinished(const Product& product, const QString& stationName);
+    // Cambiamos la firma: ahora recibe Product*
+    void onFinalProductFinished(Product* product, const QString& stationName);
+
+    // Slot para estaciones intermedias: solo re-emite estado a la GUI sin borrar
+    void onIntermediateProductFinished(Product* product, const QString& stationName);
 
 signals:
     void newProductCreated(const Product& product);

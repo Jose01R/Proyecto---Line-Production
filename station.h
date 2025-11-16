@@ -47,7 +47,7 @@ signals:
     void stationStatusUpdate(int stationId, const QString& status);
 
     // Producto completado en esta estación
-    void productFinishedProcessing(const Product& product, const QString& stationName);
+     void productFinishedProcessing(Product* product, const QString& stationName);
 };
 
 #endif // STATION_H
