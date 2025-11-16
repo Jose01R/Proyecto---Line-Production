@@ -64,6 +64,16 @@
          </property>
         </widget>
        </item>
+       <item>
+           <widget class="QPushButton" name="pushButton_Stats">
+               <property name="text">
+                   <string>📊 Estadísticas</string>
+               </property>
+               <property name="styleSheet">
+                   <string notr="true">font-weight: bold;</string>
+               </property>
+           </widget>
+       </item>
 
        <item>
         <widget class="QLabel" name="label_Status">

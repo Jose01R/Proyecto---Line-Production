@@ -1,0 +1,57 @@
+#include "statswindow.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QVBoxLayout>
+
+StatsWindow::StatsWindow(QWidget* parent)
+    : QDialog(parent),
+    chartView(new QChartView)
+{
+    setWindowTitle("📊 Estadísticas del Sistema");
+    setMinimumSize(600, 400);
+
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(chartView);
+}
+
+void StatsWindow::updateChart(const QString& json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    if (!doc.isObject()) return;
+
+    QJsonObject obj = doc.object();
+
+    int completed = obj.value("completed_products").toInt();
+    int goal = obj.value("production_goal").toInt();
+    int threads = obj.value("active_threads").toInt();
+    int buf0 = obj.value("buffer_0_usage").toInt();
+    int buf2 = obj.value("buffer_2_usage").toInt();
+    int buf4 = obj.value("buffer_4_usage").toInt();
+
+    QBarSet* set = new QBarSet("Valores");
+    *set << completed << goal << threads << buf0 << buf2 << buf4;
+
+    QBarSeries* series = new QBarSeries();
+    series->append(set);
+
+    QStringList categories = {
+        "Completados", "Meta", "Hilos", "Buffer0", "Buffer2", "Buffer4"
+    };
+
+    QChart* chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Estadísticas en tiempo real");
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    QBarCategoryAxis* axisX = new QBarCategoryAxis();
+    axisX->append(categories);
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    QValueAxis* axisY = new QValueAxis();
+    axisY->setRange(0, qMax(goal, 100));
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
+    chartView->setChart(chart);
+}

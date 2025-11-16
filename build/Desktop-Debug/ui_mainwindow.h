@@ -39,6 +39,7 @@ public:
     QPushButton *pushButton_Pause;
     QPushButton *pushButton_Stop;
     QPushButton *pushButton_History;
+    QPushButton *pushButton_Stats;
     QLabel *label_Status;
     QGroupBox *groupBox_Linea;
     QVBoxLayout *layoutLinea;
@@ -97,6 +98,12 @@ public:
         pushButton_History->setStyleSheet(QString::fromUtf8("font-weight: bold;"));
 
         layoutControls->addWidget(pushButton_History);
+
+        pushButton_Stats = new QPushButton(groupBox_Controls);
+        pushButton_Stats->setObjectName(QString::fromUtf8("pushButton_Stats"));
+        pushButton_Stats->setStyleSheet(QString::fromUtf8("font-weight: bold;"));
+
+        layoutControls->addWidget(pushButton_Stats);
 
         label_Status = new QLabel(groupBox_Controls);
         label_Status->setObjectName(QString::fromUtf8("label_Status"));
@@ -237,6 +244,7 @@ public:
         pushButton_Pause->setText(QCoreApplication::translate("MainWindow", "\342\217\270 Pausar", nullptr));
         pushButton_Stop->setText(QCoreApplication::translate("MainWindow", "\342\217\271 Detener", nullptr));
         pushButton_History->setText(QCoreApplication::translate("MainWindow", "\360\237\223\204 Historial", nullptr));
+        pushButton_Stats->setText(QCoreApplication::translate("MainWindow", "\360\237\223\212 Estad\303\255sticas", nullptr));
         label_Status->setText(QCoreApplication::translate("MainWindow", "Estado: Sistema detenido", nullptr));
         groupBox_Linea->setTitle(QCoreApplication::translate("MainWindow", "L\303\255nea de Producci\303\263n", nullptr));
         label_Assembler->setText(QCoreApplication::translate("MainWindow", "\360\237\224\247 Ensamblaje", nullptr));

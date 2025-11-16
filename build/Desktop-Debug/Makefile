@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++1z -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../../../LineProduction -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I../../../Proyecto---Line-Production -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -37,10 +37,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = LineProduction1.0.0
-DISTDIR = /home/joram/qtCreator/LineProduction/build/Desktop-Debug/.tmp/LineProduction1.0.0
+DISTDIR = /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/.tmp/LineProduction1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
+LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Charts.so /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -63,7 +63,8 @@ SOURCES       = ../../applianceGenerator.cpp \
 		../../mainwindow.cpp \
 		../../product.cpp \
 		../../productioncontroller.cpp \
-		../../station.cpp moc_assembler.cpp \
+		../../station.cpp \
+		../../statswindow.cpp moc_assembler.cpp \
 		moc_generalcleanthreads.cpp \
 		moc_generallogs.cpp \
 		moc_generalstats.cpp \
@@ -75,6 +76,7 @@ SOURCES       = ../../applianceGenerator.cpp \
 		moc_packager.cpp \
 		moc_productioncontroller.cpp \
 		moc_station.cpp \
+		moc_statswindow.cpp \
 		moc_storage.cpp \
 		moc_tester.cpp
 OBJECTS       = applianceGenerator.o \
@@ -89,6 +91,7 @@ OBJECTS       = applianceGenerator.o \
 		product.o \
 		productioncontroller.o \
 		station.o \
+		statswindow.o \
 		moc_assembler.o \
 		moc_generalcleanthreads.o \
 		moc_generallogs.o \
@@ -101,6 +104,7 @@ OBJECTS       = applianceGenerator.o \
 		moc_packager.o \
 		moc_productioncontroller.o \
 		moc_station.o \
+		moc_statswindow.o \
 		moc_storage.o \
 		moc_tester.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -114,6 +118,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri \
@@ -196,6 +201,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../../product.h \
 		../../productioncontroller.h \
 		../../station.h \
+		../../statswindow.h \
 		../../storage.h \
 		../../tester.h ../../applianceGenerator.cpp \
 		../../buffer.cpp \
@@ -208,7 +214,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../../mainwindow.cpp \
 		../../product.cpp \
 		../../productioncontroller.cpp \
-		../../station.cpp
+		../../station.cpp \
+		../../statswindow.cpp
 QMAKE_TARGET  = LineProduction
 DESTDIR       = 
 TARGET        = LineProduction
@@ -231,6 +238,7 @@ Makefile: ../../LineProduction.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri \
@@ -311,6 +319,7 @@ Makefile: ../../LineProduction.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/qconfig.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_accessibility_support_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_bootstrap_private.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_charts.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_concurrent_private.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/modules/qt_lib_core.pri:
@@ -394,8 +403,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../applianceGenerator.h ../../assembler.h ../../buffer.h ../../generalcleanthreads.h ../../generallogs.h ../../generalstats.h ../../generalthread.h ../../historywindow.h ../../labeler.h ../../logger.h ../../mainwindow.h ../../packager.h ../../product.h ../../productioncontroller.h ../../station.h ../../storage.h ../../tester.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../applianceGenerator.cpp ../../buffer.cpp ../../generalcleanthreads.cpp ../../generallogs.cpp ../../generalstats.cpp ../../historywindow.cpp ../../logger.cpp ../../main.cpp ../../mainwindow.cpp ../../product.cpp ../../productioncontroller.cpp ../../station.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../applianceGenerator.h ../../assembler.h ../../buffer.h ../../generalcleanthreads.h ../../generallogs.h ../../generalstats.h ../../generalthread.h ../../historywindow.h ../../labeler.h ../../logger.h ../../mainwindow.h ../../packager.h ../../product.h ../../productioncontroller.h ../../station.h ../../statswindow.h ../../storage.h ../../tester.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../applianceGenerator.cpp ../../buffer.cpp ../../generalcleanthreads.cpp ../../generallogs.cpp ../../generalstats.cpp ../../historywindow.cpp ../../logger.cpp ../../main.cpp ../../mainwindow.cpp ../../product.cpp ../../productioncontroller.cpp ../../station.cpp ../../statswindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../../historywindow.ui ../../mainwindow.ui $(DISTDIR)/
 
 
@@ -428,22 +437,22 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_assembler.cpp moc_generalcleanthreads.cpp moc_generallogs.cpp moc_generalstats.cpp moc_generalthread.cpp moc_historywindow.cpp moc_labeler.cpp moc_logger.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_storage.cpp moc_tester.cpp
+compiler_moc_header_make_all: moc_assembler.cpp moc_generalcleanthreads.cpp moc_generallogs.cpp moc_generalstats.cpp moc_generalthread.cpp moc_historywindow.cpp moc_labeler.cpp moc_logger.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_statswindow.cpp moc_storage.cpp moc_tester.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_assembler.cpp moc_generalcleanthreads.cpp moc_generallogs.cpp moc_generalstats.cpp moc_generalthread.cpp moc_historywindow.cpp moc_labeler.cpp moc_logger.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_storage.cpp moc_tester.cpp
+	-$(DEL_FILE) moc_assembler.cpp moc_generalcleanthreads.cpp moc_generallogs.cpp moc_generalstats.cpp moc_generalthread.cpp moc_historywindow.cpp moc_labeler.cpp moc_logger.cpp moc_mainwindow.cpp moc_packager.cpp moc_productioncontroller.cpp moc_station.cpp moc_statswindow.cpp moc_storage.cpp moc_tester.cpp
 moc_assembler.cpp: ../../assembler.h \
 		../../station.h \
 		../../buffer.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../assembler.h -o moc_assembler.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../assembler.h -o moc_assembler.cpp
 
 moc_generalcleanthreads.cpp: ../../generalcleanthreads.h \
 		../../generalthread.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalcleanthreads.h -o moc_generalcleanthreads.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalcleanthreads.h -o moc_generalcleanthreads.cpp
 
 moc_generallogs.cpp: ../../generallogs.h \
 		../../generalthread.h \
@@ -460,7 +469,7 @@ moc_generallogs.cpp: ../../generallogs.h \
 		../../logger.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generallogs.h -o moc_generallogs.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generallogs.h -o moc_generallogs.cpp
 
 moc_generalstats.cpp: ../../generalstats.h \
 		../../generalthread.h \
@@ -477,19 +486,19 @@ moc_generalstats.cpp: ../../generalstats.h \
 		../../logger.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalstats.h -o moc_generalstats.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalstats.h -o moc_generalstats.cpp
 
 moc_generalthread.cpp: ../../generalthread.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalthread.h -o moc_generalthread.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../generalthread.h -o moc_generalthread.cpp
 
 moc_historywindow.cpp: ../../historywindow.h \
 		../../logger.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../historywindow.h -o moc_historywindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../historywindow.h -o moc_historywindow.cpp
 
 moc_labeler.cpp: ../../labeler.h \
 		../../station.h \
@@ -497,13 +506,13 @@ moc_labeler.cpp: ../../labeler.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../labeler.h -o moc_labeler.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../labeler.h -o moc_labeler.cpp
 
 moc_logger.cpp: ../../logger.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../logger.h -o moc_logger.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../logger.h -o moc_logger.cpp
 
 moc_mainwindow.cpp: ../../mainwindow.h \
 		../../productioncontroller.h \
@@ -518,13 +527,14 @@ moc_mainwindow.cpp: ../../mainwindow.h \
 		../../applianceGenerator.h \
 		../../logger.h \
 		../../historywindow.h \
+		../../statswindow.h \
 		../../generalthread.h \
 		../../generalcleanthreads.h \
 		../../generalstats.h \
 		../../generallogs.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
 
 moc_packager.cpp: ../../packager.h \
 		../../station.h \
@@ -532,7 +542,7 @@ moc_packager.cpp: ../../packager.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../packager.h -o moc_packager.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../packager.h -o moc_packager.cpp
 
 moc_productioncontroller.cpp: ../../productioncontroller.h \
 		../../station.h \
@@ -547,14 +557,19 @@ moc_productioncontroller.cpp: ../../productioncontroller.h \
 		../../logger.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../productioncontroller.h -o moc_productioncontroller.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../productioncontroller.h -o moc_productioncontroller.cpp
 
 moc_station.cpp: ../../station.h \
 		../../buffer.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../station.h -o moc_station.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../station.h -o moc_station.cpp
+
+moc_statswindow.cpp: ../../statswindow.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../statswindow.h -o moc_statswindow.cpp
 
 moc_storage.cpp: ../../storage.h \
 		../../station.h \
@@ -562,7 +577,7 @@ moc_storage.cpp: ../../storage.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../storage.h -o moc_storage.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../storage.h -o moc_storage.cpp
 
 moc_tester.cpp: ../../tester.h \
 		../../station.h \
@@ -570,7 +585,7 @@ moc_tester.cpp: ../../tester.h \
 		../../product.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/joram/qtCreator/LineProduction/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/joram/qtCreator/LineProduction -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../tester.h -o moc_tester.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/jamora/Documentos/Proyecto---Line-Production/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/jamora/Documentos/Proyecto---Line-Production -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCharts -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/14 -I/usr/include/x86_64-linux-gnu/c++/14 -I/usr/include/c++/14/backward -I/usr/lib/gcc/x86_64-linux-gnu/14/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../tester.h -o moc_tester.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -662,6 +677,7 @@ main.o: ../../main.cpp ../../mainwindow.h \
 		../../applianceGenerator.h \
 		../../logger.h \
 		../../historywindow.h \
+		../../statswindow.h \
 		../../generalthread.h \
 		../../generalcleanthreads.h \
 		../../generalstats.h \
@@ -681,6 +697,7 @@ mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		../../applianceGenerator.h \
 		../../logger.h \
 		../../historywindow.h \
+		../../statswindow.h \
 		../../generalthread.h \
 		../../generalcleanthreads.h \
 		../../generalstats.h \
@@ -708,6 +725,9 @@ station.o: ../../station.cpp ../../station.h \
 		../../buffer.h \
 		../../product.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o station.o ../../station.cpp
+
+statswindow.o: ../../statswindow.cpp ../../statswindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o statswindow.o ../../statswindow.cpp
 
 moc_assembler.o: moc_assembler.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_assembler.o moc_assembler.cpp
@@ -744,6 +764,9 @@ moc_productioncontroller.o: moc_productioncontroller.cpp
 
 moc_station.o: moc_station.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_station.o moc_station.cpp
+
+moc_statswindow.o: moc_statswindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_statswindow.o moc_statswindow.cpp
 
 moc_storage.o: moc_storage.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_storage.o moc_storage.cpp

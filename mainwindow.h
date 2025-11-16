@@ -6,6 +6,8 @@
 #include "productioncontroller.h"
 #include "logger.h" //Necesario para acceder a las señales del Logger
 #include "historywindow.h"
+#include "statswindow.h"
+
 
 // ===============================================
 // INCLUSIONES DE HILOS DE MANTENIMIENTO
@@ -57,6 +59,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    StatsWindow* statsWindow;
     ProductionController *controller;
     QTimer *metricsTimer;
     int productsProcessed;

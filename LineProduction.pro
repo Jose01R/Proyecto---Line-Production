@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui widgets charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,7 +20,8 @@ SOURCES += \
     mainwindow.cpp \
     product.cpp \
     productioncontroller.cpp \
-    station.cpp
+    station.cpp \
+    statswindow.cpp
 
 HEADERS += \
     applianceGenerator.h \
@@ -38,6 +39,7 @@ HEADERS += \
     product.h \
     productioncontroller.h \
     station.h \
+    statswindow.h \
     storage.h \
     tester.h
 
@@ -49,3 +51,4 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+

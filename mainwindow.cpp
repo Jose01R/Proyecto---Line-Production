@@ -17,8 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
     , cleanThread(new GeneralCleanThreads(this))
     , logsThread(new GeneralLogs(controller, this))
     , statsThread(new GeneralStats(controller, this))
+
 {
     ui->setupUi(this);
+    statsWindow = new StatsWindow(this);
 
     ui->label_Status->setText("Sistema detenido");
     ui->textEdit_Log->setReadOnly(true);
@@ -88,6 +90,12 @@ void MainWindow::setupConnections() {
 
     connect(statsThread, &GeneralStats::statsDataReady,
             this, &MainWindow::handleStatsData);
+
+    connect(ui->pushButton_Stats, &QPushButton::clicked, [=](){
+        statsWindow->show();
+        statsWindow->raise();
+    });
+
 }
 
 /* ===============================================================
@@ -122,11 +130,13 @@ void MainWindow::handleSystemResetRequest() {
 }
 
 void MainWindow::handleStatsData(const QString& statsJson) {
+    statsWindow->updateChart(statsJson);
 
     ui->textEdit_Log->append(
-        "<span style='color:#4CAF50;'>📊 Estadísticas listas para graficar.</span>"
+        "<span style='color:#4CAF50;'>📊 Estadísticas actualizadas (ver ventana de estadísticas)</span>"
         );
 }
+
 
 /* ===============================================================
    BOTONES PRINCIPALES
